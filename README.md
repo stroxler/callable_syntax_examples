@@ -20,7 +20,7 @@ from app_logic import (
 )
 
 
-def make_fetch_history_endpoint(
+def make_show_history_endpoint(
     activity_type: str,
     *,
     data_formatter: Callable[
@@ -59,7 +59,7 @@ With shorthand syntax, the signature of `make_history_endpoint` can be written
 like this:
 
 ``` python
-def make_fetch_history_endpoint(
+def make_show_history_endpoint(
     activity_type: str,
     *,
     data_formatter: (
@@ -80,10 +80,10 @@ that we can use an `async` prefix to wrap the return type in an `Awaitable`.
 If we use def-style syntax to adapt this code with its existing semantics,
 the middleware maintainer is required to use positional-only arguments.
 
-The signature of `make_fetch_history_endpoint` can be written either with
+The signature of `make_show_history_endpoint` can be written either with
 a trailing `/` to indicate that arguments are positional:
 ```python
-def make_fetch_history_endpoint(
+def make_show_history_endpoint(
     activity_type: str,
     *,
     data_formatter: (
@@ -97,7 +97,7 @@ def make_fetch_history_endpoint(
 
 or using `__`-prefixed variable names:
 ```python
-def make_fetch_history_endpoint(
+def make_show_history_endpoint(
     activity_type: str,
     *,
     data_formatter: (
@@ -122,7 +122,7 @@ functions with named arguments.
 For example, the middleware author could write this code, which isn't expressible
 using the existing `Callable` type because of its use of named arguments:
 ``` python
-def make_fetch_history_endpoint(
+def make_show_history_endpoint(
     activity_type: str,
     *,
     data_formatter: (
@@ -160,7 +160,7 @@ If we try to use original, more-specific name `purchases` in our formatter, we'l
 type error in the endpoint definition:
 ```python
 chips_history_endpoint: async (r: HttpRequest) -> HttpResponse) = (
-    make_fetch_history_endpoint(
+    make_show_history_endpoint(
         activity_type="purchase_chips",
         # InvalidParameterType
         #   passed: (
