@@ -22,7 +22,6 @@ from app_logic import (
 
 def make_history_endpoint(
     action_type: str,
-    *,
     formatter: Callable[
         [ActionRecord, List[AuthPermission]],
         FormattedItem
@@ -62,7 +61,6 @@ like this:
 ``` python
 def make_history_endpoint(
     action_type: str,
-    *,
     formatter: (
         ActionRecord, List[AuthPermission],
     ) -> FormattedItem,
@@ -93,7 +91,6 @@ a trailing `/` to indicate that arguments are positional:
 ```python
 def make_history_endpoint(
     action_type: str,
-    *,
     formatter: (
         action: ActionRecord,
         permissions: List[AuthPermission],
@@ -107,7 +104,6 @@ or using `__`-prefixed variable names:
 ```python
 def make_history_endpoint(
     action_type: str,
-    *,
     formatter: (
         __actions: List[ActionRecord],
         __permissions: List[AuthPermission],
