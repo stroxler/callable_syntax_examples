@@ -11,62 +11,62 @@ from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 
 from app_logic import (
-    db,
     render_page,
-	format_purchase,
-    ActivityHistoryRecord,
+    fetch_history,
+    format_purchase,
+    ActionRecord,
     AuthPermission,
     FormattedItem,
 )
 
 
-def make_show_history_endpoint(
-    activity_type: str,
+def make_history_endpoint(
+    action_type: str,
     *,
-    data_formatter: Callable[
-        [ActivityHistoryRecord, List[AuthPermission]],
+    formatter: Callable[
+        [ActionRecord, List[AuthPermission]],
         FormattedItem
     ]
 ) -> Callable[[HttpRequest], Awaitable[HttpResponse]]:
-    async def handle_request(request: HttpRequest) -> HttpResponse:
-        permissions = get_auth_permissions(request.user_id)
-        activities = await db.fetch_activities(activity_type)
+    async def handle(request: HttpRequest) -> HttpResponse:
+        permissions = get_permissions(request.user_id)
+        actions = await fetch_history(action_type)
         return render_page(
-            data_formatter(activity, permissions) for activity in activities
+            formatter(action, permissions) for action in actions
         )
-    
-    return handle_request
+    return handle
 
-   
-def purchases_history_formatter(
-    purchase: ActivityHistoryRecord,
+
+def purchase_formatter(
+    purchase: ActionRecord,
     permissions: List[AuthPermission]
 ):
     purchase.check_can_view_history(permissions)
     return format_purchase(purchase)
-      
 
 
-purchase_history_endpoint: Callable[[HttpRequest], Awaitable[HttpResponse]] = (
-    activity_type="purchase_chips",
-    data_formatter=purchase_history_formatter,
+
+purchases_endpoint: Callable[
+    [HttpRequest], Awaitable[HttpResponse]
+] = (
+    action_type="purchase",
+    formatter=purchase_history_formatter,
 )
 ```
 
-# Using shorthand
+# Using shorthand syntax
 
 With shorthand syntax, the signature of `make_history_endpoint` can be written
 like this:
 
 ``` python
-def make_show_history_endpoint(
-    activity_type: str,
+def make_history_endpoint(
+    action_type: str,
     *,
-    data_formatter: (
-        activity: ActivityHistoryRecord,
-        permissions: List[AuthPermission],
+    formatter: (
+        ActionRecord, List[AuthPermission],
     ) -> FormattedItem,
-) -> async (r: HttpRequest) -> HttpResponse:
+) -> async (HttpRequest) -> HttpResponse:
     ...
 
 ```
@@ -74,20 +74,28 @@ def make_show_history_endpoint(
 The semantics of this shorthand syntax are identical to `Callable`, other than
 that we can use an `async` prefix to wrap the return type in an `Awaitable`.
 
+The purchases endpoint annotation can be written as:
+```python
+purchases_endpoint: async (HttpRequest) -> HttpResponse
+] = (
+    action_type="purchase",
+    formatter=purchase_history_formatter,
+)
+```
 
 # Using def-style syntax with positional arguments
 
 If we use def-style syntax to adapt this code with its existing semantics,
 the middleware maintainer is required to use positional-only arguments.
 
-The signature of `make_show_history_endpoint` can be written either with
+The signature of `make_history_endpoint` can be written either with
 a trailing `/` to indicate that arguments are positional:
 ```python
-def make_show_history_endpoint(
-    activity_type: str,
+def make_history_endpoint(
+    action_type: str,
     *,
-    data_formatter: (
-        activity: ActivityHistoryRecord,
+    formatter: (
+        action: ActionRecord,
         permissions: List[AuthPermission],
         /
     ) -> FormattedItem,
@@ -97,11 +105,11 @@ def make_show_history_endpoint(
 
 or using `__`-prefixed variable names:
 ```python
-def make_show_history_endpoint(
-    activity_type: str,
+def make_history_endpoint(
+    action_type: str,
     *,
-    data_formatter: (
-        __activities: List[ActivityHistoryRecord],
+    formatter: (
+        __actions: List[ActionRecord],
         __permissions: List[AuthPermission],
     ) -> List[FormattedItem],
 ) -> async (__r: HttpRequest, /) -> HttpResponse:
@@ -113,6 +121,15 @@ are free to use a variable name (like `purchase`) that is specific to
 one particular situation, then we need to be careful to use positional-only
 arguments.
 
+The purchases endpoint annotation can be written in def-style as:
+```python
+purchases_endpoint: async (r: HttpRequest, /) -> HttpResponse
+] = (
+    action_type="purchase",
+    formatter=purchase_history_formatter,
+)
+```
+
 # Using def-style syntax with named arguments
 
 The flip side of def-style syntax requiring `/` for all existing Callable
@@ -122,56 +139,52 @@ functions with named arguments.
 For example, the middleware author could write this code, which isn't expressible
 using the existing `Callable` type because of its use of named arguments:
 ``` python
-def make_show_history_endpoint(
-    activity_type: str,
-    *,
-    data_formatter: (
-        activity: ActivityHistoryRecord,
+def make_history_endpoint(
+    action_type: str,
+    formatter: (
+        action: ActionRecord,
         permissions: List[AuthPermission],
     ) -> FormattedItem,
-) -> async (HttpRequest) -> HttpResponse:
-    async def handle_request(request: HttpRequest) -> HttpResponse:
-        permissions = get_auth_permissions(request.user_id)
-        activities = await db.fetch_activities(activity_type)
+) -> async (r: HttpRequest) -> HttpResponse:
+    async def handle(request: HttpRequest) -> HttpResponse:
+        permissions = get_permissions(request.user_id)
+        actions = await fetch_history(action_type)
         return render_page(
-            data_formatter(
-                activity=activity,
-                permissions=permissions,
-            ) for activity in activities
+            formatter(action=action, permissions=permissions)
+            for action in actions
         )
-    
-    return handle_request
+    return handle
 ```
 
-But now the implementation of `purchases_history_formatter` is incorrect: we used
+But now the implementation of `purchase_formatter` is incorrect: we used
 the variable name `purchase` for the purchases but the use of named-or-positional
 arguments means all implementations have to use the generic variable name:
 
 ``` python
-def purchases_history_formatter(
-    activity: ActivityHistoryRecord,  # purchase
+def purchase_formatter(
+    action: ActionRecord,  # this is a purchase, but we can't use that name
     permissions: List[AuthPermission]
 ):
     purchase.check_can_view_history(permissions)
-    return format_purchase(activity)
+    return format_purchase(action)
 ```
 
 If we try to use original, more-specific name `purchases` in our formatter, we'll get a
 type error in the endpoint definition:
 ```python
-chips_history_endpoint: async (r: HttpRequest) -> HttpResponse) = (
-    make_show_history_endpoint(
-        activity_type="purchase_chips",
+purchases_endpoint: async (r: HttpRequest) -> HttpResponse) = (
+    make_history_endpoint(
+        action_type="purchase",
         # InvalidParameterType
         #   passed: (
-        #       purchases: ActivityHistoryRecord,
+        #       purchases: ActionRecord,
         #       auth_permissions: List[AuthPermission],
         #   ) -> List[FormattedItem]
         #   expected: (
-        #       activity: ActivityHistoryRecord,
+        #       action: ActionRecord,
         #       permissions: List[AuthPermission],
         #   ) -> List[FormattedItem]
-        data_formatter=chips_history_formatter
+        formatter=purchase_formatter
     )
 )
 ```
@@ -179,4 +192,3 @@ chips_history_endpoint: async (r: HttpRequest) -> HttpResponse) = (
 A key question is whether the syntactic consistency and increased power of
 def-style syntax is worth throwing this kind of type error, which isn't a problem
 with the existing `Callable` type or the shorthand syntax.
-
