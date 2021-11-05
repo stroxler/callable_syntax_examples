@@ -42,6 +42,39 @@ could be written instead as
 Motivation
 ==========
 
+
+The ``Callable`` type, defined as part of PEP 484, is one of the most commonly used complex types in ``typing`` alongside ``Union`` and collection types like ``Dict`` and ``List``.
+
+It is common for ``Callable`` types to become verbose. A simplified real-world example from an asyncrhonous webserver illustrates how the types can be verbose, and we can get many levels of nested square brackets:
+
+::
+    from typing import Callable, Awaitable
+    from app_logic import ActionRecord, AuthPermission, Request, Response
+
+    def make_history_endpoint(
+       formatter: Callable[
+           [ActionRecord, list[AuthPermission]],
+           FormattedItem
+       ]
+    ) -> Callable[
+        [Request], Awaitable[Response]
+    ]:
+       ...
+
+With our proposal, this code can be abbreviated to
+
+::
+    from app_logic import ActionRecord, AuthPermission, Request, Response
+
+    def make_history_endpoint(
+        formatter: (ActionRecord, list[AuthPermission]) -> FormattedItem,
+    ) -> async (Request** -> Response:
+        ...
+
+This is shorter and requires fewer imports. It also has far less nesting of square brackets - only one level, as opposed to three in the original code.
+
+****** BELOW IS FROM THE SELF-TYPE PEP I AM USING AS A TEMPLATE ******
+
 A common use case is to write a method that returns an instance of the same class, usually by returning ``self``.
 
 ::
