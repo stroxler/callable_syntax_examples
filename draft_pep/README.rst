@@ -1,6 +1,6 @@
 PEP: 9999
 Title: Callable Type Syntax
-Author: Steven Troxler <gohanpra@gmail.com>
+Author: Steven Troxler <steven.troxler@gmail.com>
 Sponsor: TODO
 Status: Draft
 Type: Standards Track
@@ -12,8 +12,32 @@ Post-History:
 Abstract
 ========
 
-This PEP introduces a concise and structured syntax for callable types, supporting the same functionality as `typing.Callable` but with an arrow syntax inspired by the syntax for typed function signatures.
+This PEP introduces a concise and structured syntax for callable types, supporting the same functionality as ``typing.Callable`` but with an arrow syntax inspired by the syntax for typed function signatures.
 
+If we adopt this proposal, the following annotated variables
+::
+  from typing import Awaitable, Callable, Concatenate, ParamSpec, TypeAlias
+
+  P = ParamSpec("P")
+
+  f0: TypeAlias Callable[[int, str], bool]
+  f1: Callable[..., bool]
+  f2: Callable[[str], Awaitlable[str]]
+  f3: Callable[P, bool]
+  f4: Callable[Concatenate[int, P], bool]
+
+
+could be written instead as
+::
+  from typing import ParamSpec
+
+  P = ParamSpec("P")
+
+  f0: (int, str) -> bool
+  f1: (...) -> bool
+  f2: async (str) -> str
+  f3: (**P) -> bool
+  f4: (int, **P) -> bool
 
 Motivation
 ==========
@@ -634,75 +658,81 @@ We reject this because Explicit Is Better Than Implicit. Beyond that, the above 
 Reference Implementation
 ========================
 
-Pyre: TODO
-Mypy: https://github.com/Gobot1234/mypy
-
+TODO. This will require a fork of CPython with the new grammar.
 
 
 Resources
 =========
 
-Similar discussions on a ``Self`` type in Python started in Mypy around 2016: [#mypy1212]_. However, the approach ultimately taken there was the bounded ``TypeVar`` approach shown in our "before" examples. Other issues that discuss this include [#mypy2354]_.
+PEP 484 specifies a very similar syntax for function type hint *comments* for use in code that needs to work on Python 2.7: [#pep-484-function-type-hints]_
 
-**Pradeep** made a concrete proposal at the PyCon Typing Summit 2021: [#type-variables-for-all]_ ([#type-variables-for-all-slides]_).
+**Maggie** proposed better callable type syntax at the PyCon Typing Summit 2021: [#type-syntax-simplification]_ ([#type-variables-for-all-slides]_).
 
-**James** brought up the proposal independently on typing-sig: [#james-typing-sig]_.
+**Steven** brought up this proposal on typing-sig: [#typing-sig-thread]_.
 
-Other languages have similar ways to express the type of the enclosing class:
-TypeScript has the ``this`` type [#typescript-this-type]_
-Rust has the ``Self`` type [#rust-self-type]_
+**Pradeep** brought this proposal to python-dev for feedback: [#python-dev-thread]_.
+
+Other languages use a similar arrow syntax to express callable types:
+Kotlin uses ``->`` [#kotlin]_
+Typescript uses ``=>`` [#typescript]_
+Flow uses ``=>`` [#flow]_
 
 Thanks to the following people for their feedback on the PEP:
 
-Jia Chen, Rebecca Chen, Sergei Lebedev, Kaylynn Morgan, Tuomas Suutari, Alex Waygood, Shannon Zhu, and Никита Соболев
+Guido Van Rossum, Pradeep Kumar Srinivasan, Eric Taub
+TODO: ADD MANY MORE THANKS. (keep it alphabetical).
+
 
 References
 ==========
 
-.. [#mypy1212] SelfType or another way to spell "type of self"
+.. [#self-type-usage-stats] Callable type usage stats
 
-    https://github.com/python/mypy/issues/1212
+    https://github.com/pradeep90/annotation_collector#callable-usage-stats
 
-.. [#mypy2354] Self types in generic classes
+.. [#pep-484-callable] Callable type as specified in PEP 484
 
-    https://github.com/python/mypy/issues/2354
+    https://www.python.org/dev/peps/pep-0484/#callable
 
-.. [#type-variables-for-all] Type Variables for All talk
+.. [#pep-484-function-type-hints] Function type hint comments, as outlined by PEP 484 for Python 2.7 code
 
-    https://youtu.be/ld9rwCvGdhc?t=3260
+    https://www.python.org/dev/peps/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code
 
-.. [#type-variables-for-all-slides] Slides
+.. [#typing-sig-thread] Discussion of Callable syntax in the typing-sig mailing list.
 
-    https://drive.google.com/file/d/1x-qoDVY_OvLpIV1EwT7m3vm4HrgubHPG/view
+    https://mail.python.org/archives/list/typing-sig@python.org/thread/3JNXLYH5VFPBNIVKT6FFBVVFCZO4GFR2/
 
-.. [#james-typing-sig] Thread
+.. [#callable-syntax-proposals-slides] Slides discussing potential Callable syntaxes (from 2021-09-20)
 
-    https://mail.python.org/archives/list/typing-sig@python.org/thread/SJAANGA2CWZ6D6TJ7KOPG7PZQC56K73S/#B2CBLQDHXQ5HMFUMS4VNY2D4YDCFT64Q
+    https://www.dropbox.com/s/sshgtr4p30cs0vc/Python%20Callable%20Syntax%20Proposals.pdf?dl=0
 
-.. [#property-workaround] Property workaround
+.. [#python-dev-thread] Discussion of new syntax on the python-dev mailing list
 
-    https://mypy-play.net/?mypy=latest&python=3.8&gist=ae886111451833e38737721a4153fd96
+    https://mail.python.org/archives/list/python-dev@python.org/thread/VBHJOS3LOXGVU6I4FABM6DKHH65GGCUB/
 
-.. [#self-type-usage-stats] Self type usage stats
+.. [#callback-protocols] Callback protocols, as described in MyPy docs
 
-    https://github.com/pradeep90/annotation_collector/#self-type-stats
+    https://mypy.readthedocs.io/en/stable/protocols.html#callback-protocols
 
-.. [#callable-dict-usage-stats] ``Callable`` and ``dict`` usage stats
+.. [#sc-note-about-annotations] Steering Council note about type annotations and regular python
 
-    https://github.com/pradeep90/annotation_collector/#overall-stats-in-typeshed
+    https://mail.python.org/archives/list/python-dev@python.org/message/SZLWVYV2HPLU6AH7DOUD7DWFUGBJGQAY/
 
-.. [#protocol-self-type] Protocol-bound ``TypeVar``
+.. [#type-syntax-simplification] Slides on type syntax simplification from PyCon 2021
 
-    https://www.python.org/dev/peps/pep-0544/#self-types-in-protocols
+    TODO: get this, reach out to Maggie if I can't find it
 
-.. [#rust-self-type] Rust ``Self`` type
+.. [#typescript] Callable types in TypeScript
 
-    https://doc.rust-lang.org/std/keyword.SelfTy.html
+    https://basarat.gitbook.io/typescript/type-system/callable#arrow-syntax
 
-.. [#typescript-this-type] TypeScript ``this`` type
+.. [#kotlin] Callable types in Kotlin
 
-    https://typescriptlang.org/docs/handbook/2/classes.html#this-types
+    https://kotlinlang.org/docs/lambdas.html#function-types
 
+.. [#flow] Callable types in Flow
+
+    https://flow.org/en/docs/types/functions/#toc-function-types
 
 Copyright
 =========
