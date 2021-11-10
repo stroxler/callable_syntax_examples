@@ -51,7 +51,7 @@ It is common for ``Callable`` types to become verbose. A simplified real-world e
     from typing import Callable, Awaitable
     from app_logic import ActionRecord, AuthPermission, Request, Response
 
-    def make_history_endpoint(
+    def make_endpoint(
        formatter: Callable[
            [ActionRecord, list[AuthPermission]],
            FormattedItem
@@ -66,12 +66,74 @@ With our proposal, this code can be abbreviated to
 ::
     from app_logic import ActionRecord, AuthPermission, Request, Response
 
-    def make_history_endpoint(
+    def make_endpoint(
         formatter: (ActionRecord, list[AuthPermission]) -> FormattedItem,
-    ) -> async (Request** -> Response:
+    ) -> async (Request) -> Response:
         ...
 
 This is shorter and requires fewer imports. It also has far less nesting of square brackets - only one level, as opposed to three in the original code.
+
+ParamSpec and Concatenate Support
+---------------------------------
+
+The example above illustrates how we get a more concise and visually rich syntax for simple ``Callable`` types. We also proposing to incorporate ``ParamSpec`` support in the syntax because (in part due to decorators) one of the most common uses of callbacks is to forward all arguments.
+
+With arrow-based ``Callable`` syntax this simple decorator
+::
+    from typing import Callable, ParamSpec
+
+    P = ParamSpec("P")
+
+    def decorator(
+        f: Callable[P, bool],
+    ) -> Callable[P, bool]:
+        def wrapper(*args: P.args **kwargs: P.kwargs) -> bool:
+            return f(*args, **kwargs)
+        return wrapper
+
+
+can be written as
+::
+    from typing import ParamSpec
+
+    P = ParamSpec("P")
+
+    def decorator(
+        f: (**P) -> bool
+    ) -> (**P) -> bool:
+        ...
+
+
+The resulting code is more concise. Moreover, the ``**P`` makes it obvious that ``P`` is not a positional argument type, whereas it is easier to misread ``Callable[P, bool]`` as ``Callable[[P], bool]``, particularly for developers who are not yet familiar with ``ParamSpec``.
+
+
+Our proposed syntax also supports ``Concatenate``, which is verbose using the existing syntax. We propose to allow writing
+::
+    from typing import Callable, Concatenate, ParamSpec
+
+    P = ParamSpec("P")
+
+    def with_printing(
+       f: (**P) -> bool,
+    ) -> Callable[Concatenate[str, P], bool]
+        def wrapper(message: str, *args: P.args **kwargs: P.kwargs) -> bool:
+            print(message)
+            return f(*args, **kwargs)
+        return wrapper
+
+as
+::
+    from typing import ParamSpec
+
+    P = ParamSpec("P")
+
+    def with_printing(
+       f: (**P) -> bool,
+    ) -> (str, **P) -> bool:
+       ...
+
+
+
 
 ****** BELOW IS FROM THE SELF-TYPE PEP I AM USING AS A TEMPLATE ******
 
