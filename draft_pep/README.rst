@@ -267,6 +267,39 @@ in exactly the same way as the same module written in terms of ``Callable``:
 Runtime Behavior
 ----------------
 
+TODO: I'm not ready to write this section. It needs some discussion with typing-sig and
+python-dev, because there are real questions. I'm also not very familiar with how libraries
+that use annotations at runtime actually work, which is probably important for making good
+choices here.
+
+Here's what I'm pretty sure of:
+- Based on discussion in ``typing-sig``, we probably don't want to make the new type
+  syntactic sugar for ``Callable``, instead we'll want a new builtin type.
+- It seems obvious that the new type ``__repr__`` should print the new syntax
+  - It's less obvious whether the ``typing.Callable`` ``__repr_``
+- The ``async`` keyword brings up an issue for implementing ``__eq__``:
+  - Presumably ``async (str) -> str`` and ``(str) -> Awaitable[str]`` will have different
+    runtime representations. But should they be considered equal?
+  - My opinion on this is no, but it's not obvious to me that I'm right.
+
+Things I'm less sure of
+
+- The type is immutable. Should it be hashable? That would further constrain our
+  hangling of ``async`` vs returning an ``Awaitable``.
+- In the spirit of PEP 604, we *might* want to require that ``Callable`` and
+  the new type can be compared to one another with ``.eq``, going in either direction.
+  - The same question of whether to interpret ``async (str) -> str`` as equivalent
+    to ``Callable[[str], Awaitable[str]]`` comes up. We should keep in mind the potential
+    to break transitivity of ``==`` if we answer this question inconsistently.
+
+To me the biggest concern is not abstract worries about the runtime behavior,
+but having a clear migration path for libraries that rely on type annotations at
+runtime. That should inform our decision about how ``==`` works. It might also be
+worth implementing either a method on the new callable type or a static method on
+``typing.Callable`` that can produce an equivalent old-style ``Callable`` type from
+the builtin callable type.
+
+
 Rejected Alternatives
 =====================
 
