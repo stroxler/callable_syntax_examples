@@ -13,7 +13,9 @@ Post-History:
 Abstract
 ========
 
-This PEP introduces a concise and structured syntax for callable types, supporting the same functionality as ``typing.Callable`` but with an arrow syntax inspired by the syntax for typed function signatures. This allows types like ``Callable[[int, str], bool]`` to be written ``(int, str) -> bool``
+This PEP introduces a concise and structured syntax for callable types, supporting the same functionality as ``typing.Callable`` but with an arrow syntax inspired by the syntax for typed function signatures. This allows types like ``Callable[[int, str], bool]`` to be written ``(int, str) -> bool``.
+
+The proposed syntax supports all the functionality of the existing ``Callable`` time, including ``ParamSpec`` as specified in PEP 612 and ``TypeVarTuple`` as specified by PEP 646.
 
 
 Motivation
