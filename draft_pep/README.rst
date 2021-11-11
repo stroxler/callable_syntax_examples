@@ -226,6 +226,36 @@ Specification
 Grammar
 -------
 
+The following changes to Python's PEG grammar [#python-grammar]_ would allow the proposed callable syntax:
+
+::
+    expression:
+        | < preexisting_expression_variants >
+        | callable_type_expression
+
+    callable_type_expression:
+        | [ ASYNC ] callable_parameters '->' expression
+
+    callable_parameters:
+        | '(' ')'
+        | '(' '...' ')'
+        | '(' positional_parameter* [param_spec]  ')'
+
+    positional_parameter:
+        | positional_parameter_type ','
+        | positional_parameter_type &')'
+
+    positional_parameter_type:
+        | expression
+        | '*' NAME
+
+    param_spec:
+        | '**' NAME ','
+        | '**' NAME &')'
+
+
+The ``positional_parameter_type`` form allows either an expression or a splatted name because PEP 646 permits ``TypeVarTuple`` values anywhere in the positional parameters list, not just at the end.
+
 
 Typing Behavior
 ---------------
@@ -298,6 +328,10 @@ worth implementing either a method on the new callable type or a static method o
 ``typing.Callable`` that can produce an equivalent old-style ``Callable`` type from
 the builtin callable type.
 
+One workaround for many of these issues would be to make the new syntax as close
+as possible to pure syntactic sugar for ``typing.Callable``. One way of doing that
+would be to have the builtin type constructed by the syntax implement ``__getattr__``
+by constructing an equivalent ``Callable`` type.
 
 Rejected Alternatives
 =====================
@@ -407,6 +441,10 @@ References
 .. [#type-syntax-simplification] Presentation on type syntax simplification from PyCon 2021
 
     https://www.youtube.com/watch?v=ld9rwCvGdhc&t=8s
+
+.. [#python-grammar] Python's PEG grammar
+
+    https://docs.python.org/3/reference/grammar.html
 
 .. [#callable-syntax-grammar-doc] Google doc with BNF and PEG grammar for callable type syntax
 
