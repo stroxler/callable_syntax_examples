@@ -226,7 +226,6 @@ Specification
 Grammar
 -------
 
-I can start from https://docs.google.com/document/d/1Ookl5s6LM1zZo5rSQpxiOfGknriW9-GRbTWtn8Q0a44/edit
 
 Typing Behavior
 ---------------
@@ -346,6 +345,8 @@ Kotlin uses ``->`` [#kotlin]_
 Typescript uses ``=>`` [#typescript]_
 Flow uses ``=>`` [#flow]_
 
+To sanity check the grammar, I used an online tool against a BNF variant, see [#callable-syntax-grammar-doc]_
+
 Thanks to the following people for their feedback on the PEP:
 
 Guido Van Rossum, Pradeep Kumar Srinivasan, Eric Taub
@@ -403,9 +404,13 @@ References
 
     https://mail.python.org/archives/list/python-dev@python.org/message/SZLWVYV2HPLU6AH7DOUD7DWFUGBJGQAY/
 
-.. [#type-syntax-simplification] Slides on type syntax simplification from PyCon 2021
+.. [#type-syntax-simplification] Presentation on type syntax simplification from PyCon 2021
 
-    TODO: get this, reach out to Maggie if I can't find it
+    https://www.youtube.com/watch?v=ld9rwCvGdhc&t=8s
+
+.. [#callable-syntax-grammar-doc] Google doc with BNF and PEG grammar for callable type syntax
+
+    https://docs.google.com/document/d/12201yww1dBIyS6s0FwdljM-EdYr6d1YdKplWjPSt1SE/edit
 
 .. [#typescript] Callable types in TypeScript
 
