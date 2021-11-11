@@ -197,19 +197,6 @@ In typed / untyped projects respectively, when we look at the actual call patter
 A special case that ``Callable`` cannot support is the use of named or optional (i.e. having a default value) arguments. These currently can be typed using callback protocols [#callback-protocols]_, but not the ``Callable`` type. For both typed and untyped projects, the fraction of callbacks using named or optional arguments is less than 2%.
 
 
-==========================================
-Outline of possible sections and resources
-==========================================
-
-PEP 604: similar in spirit, also a very similar PEP:
-https://www.python.org/dev/peps/pep-0604/
-
-PEP 646: the other current typing PEP that's waiting for grammar changes:
-https://www.python.org/dev/peps/pep-0646/
-
-PEP 612 (ParamSpec), which has some overlap in the motivation (although our motivation is really closer to 604, since we're only proposing nicer syntax rather than new semantics):
-https://www.python.org/dev/peps/pep-0612
-
 Specification
 =============
 
