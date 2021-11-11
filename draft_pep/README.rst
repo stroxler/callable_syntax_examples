@@ -15,36 +15,34 @@ Abstract
 
 This PEP introduces a concise and structured syntax for callable types, supporting the same functionality as ``typing.Callable`` but with an arrow syntax inspired by the syntax for typed function signatures.
 
-If we adopt this proposal, the following annotated variables
-::
-  from typing import Awaitable, Callable, Concatenate, ParamSpec, TypeVarTuple
+If we adopt this proposal, the following annotated variables::
+    from typing import Awaitable, Callable, Concatenate, ParamSpec, TypeVarTuple
 
-  P = ParamSpec("P")
-  Ts = = TypeVarTuple('Ts')
+    P = ParamSpec("P")
+    Ts = = TypeVarTuple('Ts')
 
-  f0: TypeAlias Callable[[int, str], bool]
-  f1: Callable[..., bool]
-  f2: Callable[[str], Awaitlable[str]]
-  f3: Callable[P, bool]
-  f4: Callable[Concatenate[int, P], bool]
-  f5: Callable[[*Ts], bool]
-  f6: Callable[[int, *Ts, str], bool]
+    f0: TypeAlias Callable[[int, str], bool]
+    f1: Callable[..., bool]
+    f2: Callable[[str], Awaitlable[str]]
+    f3: Callable[P, bool]
+    f4: Callable[Concatenate[int, P], bool]
+    f5: Callable[[*Ts], bool]
+    f6: Callable[[int, *Ts, str], bool]
 
 
-could be written instead as
-::
-  from typing import ParamSpec, TypeVarTuple
+could be written instead as::
+    from typing import ParamSpec, TypeVarTuple
 
-  P = ParamSpec("P")
-  Ts = = TypeVarTuple('Ts')
+    P = ParamSpec("P")
+    Ts = = TypeVarTuple('Ts')
 
-  f0: (int, str) -> bool
-  f1: (...) -> bool
-  f2: async (str) -> str
-  f3: (**P) -> bool
-  f4: (int, **P) -> bool
-  f5: (*Ts) -> bool
-  f6: (int, *Ts, str) -> bool
+    f0: (int, str) -> bool
+    f1: (...) -> bool
+    f2: async (str) -> str
+    f3: (**P) -> bool
+    f4: (int, **P) -> bool
+    f5: (*Ts) -> bool
+    f6: (int, *Ts, str) -> bool
 
 
 Motivation
@@ -53,9 +51,8 @@ Motivation
 
 The ``Callable`` type, defined as part of PEP 484, is one of the most commonly used complex types in ``typing`` alongside ``Union`` and collection types like ``Dict`` and ``List``.
 
-It is common for ``Callable`` types to become verbose. A simplified real-world example from an asyncrhonous webserver illustrates how the types can be verbose, and we can get many levels of nested square brackets:
+It is common for ``Callable`` types to become verbose. A simplified real-world example from an asyncrhonous webserver illustrates how the types can be verbose, and we can get many levels of nested square brackets::
 
-::
     from typing import Callable, Awaitable
     from app_logic import ActionRecord, AuthPermission, Request, Response
 
@@ -69,9 +66,8 @@ It is common for ``Callable`` types to become verbose. A simplified real-world e
     ]:
        ...
 
-With our proposal, this code can be abbreviated to
+With our proposal, this code can be abbreviated to::
 
-::
     from app_logic import ActionRecord, AuthPermission, Request, Response
 
     def make_endpoint(
