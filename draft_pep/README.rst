@@ -204,6 +204,49 @@ In untyped projects, which are less constrained by the existing features of ``Ca
 For both untyped *and* typed projects, the fraction of callbacks making use of named and/or optional arguments is around 2%. This is part of why we decided to propose a simple syntax supporting the same features as ``Callable`` rather than an extended syntax supporting named and optional arguments, which are currently possible to describe using callback protocols [#callback-protocols**_
 
 
+==========================================
+Outline of possible sections and resources
+==========================================
+
+PEP 604: similar in spirit, also a very similar PEP:
+https://www.python.org/dev/peps/pep-0604/
+
+PEP 646: the other current typing PEP that's waiting for grammar changes:
+https://www.python.org/dev/peps/pep-0646/
+
+PEP 612 (ParamSpec), which has some overlap in the motivation (although our motivation is really closer to 604, since we're only proposing nicer syntax rather than new semantics):
+https://www.python.org/dev/peps/pep-0612
+
+Specification
+=============
+
+Grammar
+-------
+
+I can start from https://docs.google.com/document/d/1Ookl5s6LM1zZo5rSQpxiOfGknriW9-GRbTWtn8Q0a44/edit
+
+Typing Behavior
+---------------
+
+
+Runtime behavior
+================
+
+
+Rejected Alternatives
+=====================
+
+Use a Syntax As Similar as Possible to Signatures
+-------------------------------------------------
+
+Propose an Extended Syntax to Include Named and Optional Arguments
+------------------------------------------------------------------
+
+
+Reference Implementation
+========================
+
+TODO. This will require a fork of CPython with the new grammar.
 
 
 Resources
