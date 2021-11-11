@@ -241,33 +241,32 @@ Inside of type checkers, the new syntax should be treated with exactly the same 
 
 Going back to the examples from our abstract, type checkers should treat the following module
 ::
-  from typing import ParamSpec, TypeVarTuple
+    from typing import ParamSpec, TypeVarTuple
 
-  P = ParamSpec("P")
-  Ts = = TypeVarTuple('Ts')
+    P = ParamSpec("P")
+    Ts = = TypeVarTuple('Ts')
 
-  f0: (int, str) -> bool
-  f1: (...) -> bool
-  f2: async (str) -> str
-  f3: (**P) -> bool
-  f4: (int, **P) -> bool
-  f5: (*Ts) -> bool
-  f6: (int, *Ts, str) -> bool
+    f0: (int, str) -> bool
+    f1: (...) -> bool
+    f2: async (str) -> str
+    f3: (**P) -> bool
+    f4: (int, **P) -> bool
+    f5: (*Ts) -> bool
+    f6: (int, *Ts, str) -> bool
 
-in exactly the same way as the same module written in terms of ``Callable``:
-::
-  from typing import Awaitable, Callable, Concatenate, ParamSpec, TypeVarTuple
+in exactly the same way as the same module written in terms of ``Callable``::
+   from typing import Awaitable, Callable, Concatenate, ParamSpec, TypeVarTuple
 
-  P = ParamSpec("P")
-  Ts = = TypeVarTuple('Ts')
+   P = ParamSpec("P")
+   Ts = = TypeVarTuple('Ts')
 
-  f0: TypeAlias Callable[[int, str], bool]
-  f1: Callable[..., bool]
-  f2: Callable[[str], Awaitlable[str]]
-  f3: Callable[P, bool]
-  f4: Callable[Concatenate[int, P], bool]
-  f5: Callable[[*Ts], bool]
-  f6: Callable[[int, *Ts, str], bool]
+   f0: TypeAlias Callable[[int, str], bool]
+   f1: Callable[..., bool]
+   f2: Callable[[str], Awaitlable[str]]
+   f3: Callable[P, bool]
+   f4: Callable[Concatenate[int, P], bool]
+   f5: Callable[[*Ts], bool]
+   f6: Callable[[int, *Ts, str], bool]
 
 
 Runtime Behavior
