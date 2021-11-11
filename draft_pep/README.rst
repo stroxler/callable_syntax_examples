@@ -16,28 +16,32 @@ This PEP introduces a concise and structured syntax for callable types, supporti
 
 If we adopt this proposal, the following annotated variables
 ::
-  from typing import Awaitable, Callable, Concatenate, ParamSpec, TypeAlias
+  from typing import Awaitable, Callable, Concatenate, ParamSpec, TypeVarTuple
 
   P = ParamSpec("P")
+  Ts = = TypeVarTuple('Ts')
 
   f0: TypeAlias Callable[[int, str], bool]
   f1: Callable[..., bool]
   f2: Callable[[str], Awaitlable[str]]
   f3: Callable[P, bool]
   f4: Callable[Concatenate[int, P], bool]
+  f5: Callable[[*Ts]]
 
 
 could be written instead as
 ::
-  from typing import ParamSpec
+  from typing import ParamSpec, TypeVarTuple
 
   P = ParamSpec("P")
+  Ts = = TypeVarTuple('Ts')
 
   f0: (int, str) -> bool
   f1: (...) -> bool
   f2: async (str) -> str
   f3: (**P) -> bool
   f4: (int, **P) -> bool
+
 
 Motivation
 ==========
@@ -73,10 +77,12 @@ With our proposal, this code can be abbreviated to
 
 This is shorter and requires fewer imports. It also has far less nesting of square brackets - only one level, as opposed to three in the original code.
 
-ParamSpec and Concatenate Support
----------------------------------
 
-The example above illustrates how we get a more concise and visually rich syntax for simple ``Callable`` types. We also proposing to incorporate ``ParamSpec`` support in the syntax because (in part due to decorators) one of the most common uses of callbacks is to forward all arguments.
+ParamSpec and Concatenate
+-------------------------
+
+The example above illustrates how we get a more concise and visually rich syntax for simple ``Callable`` types. We also proposing to incorporate ``ParamSpec`` support in the syntax because (in part due to decorators) one common use case of callables is to forward all arguments.
+
 
 With arrow-based ``Callable`` syntax this simple decorator
 ::
@@ -92,7 +98,7 @@ With arrow-based ``Callable`` syntax this simple decorator
         return wrapper
 
 
-can be written as
+can be written
 ::
     from typing import ParamSpec
 
@@ -107,7 +113,7 @@ can be written as
 The resulting code is more concise. Moreover, the ``**P`` makes it obvious that ``P`` is not a positional argument type, whereas it is easier to misread ``Callable[P, bool]`` as ``Callable[[P], bool]``, particularly for developers who are not yet familiar with ``ParamSpec``.
 
 
-Our proposed syntax also supports ``Concatenate``, which is verbose using the existing syntax. We propose to allow writing
+Our proposed syntax also supports ``Concatenate``. It would allow
 ::
     from typing import Callable, Concatenate, ParamSpec
 
@@ -121,7 +127,7 @@ Our proposed syntax also supports ``Concatenate``, which is verbose using the ex
             return f(*args, **kwargs)
         return wrapper
 
-as
+to be written
 ::
     from typing import ParamSpec
 
@@ -131,6 +137,38 @@ as
        f: (**P) -> bool,
     ) -> (str, **P) -> bool:
        ...
+
+
+Usage Statistics
+----------------
+
+The ``Callable`` type is widely used. For example, in typeshed [#typeshed-stats]_ it is the fifth most common complex type, after ``Optional``, ``Tuple``, ``Union``, and ``List``. Most of these have gotten improved syntax either via PEP 604 or PEP 525. We believe ``Callable`` is heavily enough used to similarly justify a more usable syntax, particularly given that the need for two layers of square brackets in most ``Callable`` types.
+
+
+Our decision to support ``ParamSpec``, ``Concatenate``, and ``TypeVarTuple`` is informed by looking at how frequently these features are used both in existing ``Callable`` types as well as in untyped callback functions.
+
+Of existing callable types [#callable-type-usage-stats]_,
+ - 57% use only positional arguments
+ - 43% use partial typing (e.g. bare ``Callable`` or ``Callable[..., R]``). We'll look at the actual use of callbacks shortly to understand why these callables may be partially-typed.
+ - 1% use Callback protocols, which support features like named arguments that ``Callable`` cannot handle
+[#callable-type-usage-stats]_ and how often callbacks (whether or not they are typed) use call patterns requiring various features [#callback-usage-stats-typed]__
+We want to be sure that we support the most common uses of ``Callable``.
+
+In typed projects, when we look at the actual call patterns for callbacks [#typed-callback-usage]_, what we see is that
+* 69% use only positional arguments.
+* 9% pass along ``*args`` and ``**kwargs``, which can be made type-safe using ``ParamSpec``.
+* 10% pass along just ``*args``, which we can support using ``TypeVarTuple``.
+* The remainder make use of features that neither ``Callable`` nor our proposed syntax support.
+
+In untyped projects, which are less constrained by the existing features of ``Callable``, we see a different balance but a similar overall pattern:
+* 43% use only positional arguments.
+* 26% pass along ``*args`` and ``**kwargs`` and so would benefit from ``ParamSpec``.
+* 4% pass along just ``*args``.
+* The remainder use features that neither the current ``Callable`` nor our proposal support. And once again only about 2% are using named or default
+* 10% pass along just ``*args``, which we can support using ``TypeVarTuple``
+* The remainder make use of features that neither ``Callable`` nor our proposed syntax support.
+
+For both untyped *and* typed projects, the fraction of callbacks making use of named and/or optional arguments is around 2%. This is part of why we decided to propose a simple syntax supporting the same features as ``Callable`` rather than an extended syntax supporting named and optional arguments, which are currently possible to describe using callback protocols [#callback-protocols]_
 
 
 
@@ -781,9 +819,21 @@ TODO: ADD MANY MORE THANKS. (keep it alphabetical).
 References
 ==========
 
-.. [#self-type-usage-stats] Callable type usage stats
+.. [#typeshed-stats] Overall type usage for typeshed
 
-    https://github.com/pradeep90/annotation_collector#callable-usage-stats
+    https://github.com/pradeep90/annotation_collector#overall-stats-in-typeshed
+
+.. [#callable-type-usage-stats] Callable type usage stats
+
+    https://github.com/pradeep90/annotation_collector#typed-projects---callable-type
+
+.. [#typed-callback-usage] Callback usage stats in typed projects
+
+    https://github.com/pradeep90/annotation_collector#typed-projects---callback-usage
+
+.. [#typed-callback-usage] Callback usage stats in typed projects
+
+    https://github.com/pradeep90/annotation_collector#typed-projects---callback-usage
 
 .. [#pep-484-callable] Callable type as specified in PEP 484
 
@@ -792,6 +842,10 @@ References
 .. [#pep-484-function-type-hints] Function type hint comments, as outlined by PEP 484 for Python 2.7 code
 
     https://www.python.org/dev/peps/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code
+
+.. [#callback-protocols] Callback protocols
+
+    https://mypy.readthedocs.io/en/stable/protocols.html#callback-protocols
 
 .. [#typing-sig-thread] Discussion of Callable syntax in the typing-sig mailing list.
 
