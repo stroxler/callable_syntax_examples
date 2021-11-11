@@ -13,36 +13,7 @@ Post-History:
 Abstract
 ========
 
-This PEP introduces a concise and structured syntax for callable types, supporting the same functionality as ``typing.Callable`` but with an arrow syntax inspired by the syntax for typed function signatures.
-
-If we adopt this proposal, the following annotated variables::
-    from typing import Awaitable, Callable, Concatenate, ParamSpec, TypeVarTuple
-
-    P = ParamSpec("P")
-    Ts = = TypeVarTuple('Ts')
-
-    f0: TypeAlias Callable[[int, str], bool]
-    f1: Callable[..., bool]
-    f2: Callable[[str], Awaitlable[str]]
-    f3: Callable[P, bool]
-    f4: Callable[Concatenate[int, P], bool]
-    f5: Callable[[*Ts], bool]
-    f6: Callable[[int, *Ts, str], bool]
-
-
-could be written instead as::
-    from typing import ParamSpec, TypeVarTuple
-
-    P = ParamSpec("P")
-    Ts = = TypeVarTuple('Ts')
-
-    f0: (int, str) -> bool
-    f1: (...) -> bool
-    f2: async (str) -> str
-    f3: (**P) -> bool
-    f4: (int, **P) -> bool
-    f5: (*Ts) -> bool
-    f6: (int, *Ts, str) -> bool
+This PEP introduces a concise and structured syntax for callable types, supporting the same functionality as ``typing.Callable`` but with an arrow syntax inspired by the syntax for typed function signatures. This allows types like ``Callable[[int, str], bool]`` to be written ``(int, str) -> bool``
 
 
 Motivation
@@ -200,6 +171,41 @@ A special case that ``Callable`` cannot support is the use of named or optional 
 Specification
 =============
 
+
+Typing Behavior
+---------------
+
+Inside of type checkers, the new syntax should be treated with exactly the same semantics as ``typing.Callable``.
+
+So a type checker should treat the following module::
+::
+    from typing import ParamSpec, TypeVarTuple
+
+    P = ParamSpec("P")
+    Ts = = TypeVarTuple('Ts')
+
+    f0: (int, str) -> bool
+    f1: (...) -> bool
+    f2: async (str) -> str
+    f3: (**P) -> bool
+    f4: (int, **P) -> bool
+    f5: (*Ts) -> bool
+    f6: (int, *Ts, str) -> bool
+
+in exactly the same way as the same module written in terms of ``Callable``::
+   from typing import Awaitable, Callable, Concatenate, ParamSpec, TypeVarTuple
+
+   P = ParamSpec("P")
+   Ts = = TypeVarTuple('Ts')
+
+   f0: TypeAlias Callable[[int, str], bool]
+   f1: Callable[..., bool]
+   f2: Callable[[str], Awaitlable[str]]
+   f3: Callable[P, bool]
+   f4: Callable[Concatenate[int, P], bool]
+   f5: Callable[[*Ts], bool]
+   f6: Callable[[int, *Ts, str], bool]
+
 Grammar
 -------
 
@@ -232,41 +238,6 @@ The following changes to Python's PEG grammar [#python-grammar]_ would allow the
 
 
 The ``positional_parameter_type`` form allows either an expression or a splatted name because PEP 646 permits ``TypeVarTuple`` values anywhere in the positional parameters list, not just at the end.
-
-
-Typing Behavior
----------------
-
-Inside of type checkers, the new syntax should be treated with exactly the same semantics as ``typing.Callable``.
-
-Going back to the examples from our abstract, type checkers should treat the following module
-::
-    from typing import ParamSpec, TypeVarTuple
-
-    P = ParamSpec("P")
-    Ts = = TypeVarTuple('Ts')
-
-    f0: (int, str) -> bool
-    f1: (...) -> bool
-    f2: async (str) -> str
-    f3: (**P) -> bool
-    f4: (int, **P) -> bool
-    f5: (*Ts) -> bool
-    f6: (int, *Ts, str) -> bool
-
-in exactly the same way as the same module written in terms of ``Callable``::
-   from typing import Awaitable, Callable, Concatenate, ParamSpec, TypeVarTuple
-
-   P = ParamSpec("P")
-   Ts = = TypeVarTuple('Ts')
-
-   f0: TypeAlias Callable[[int, str], bool]
-   f1: Callable[..., bool]
-   f2: Callable[[str], Awaitlable[str]]
-   f3: Callable[P, bool]
-   f4: Callable[Concatenate[int, P], bool]
-   f5: Callable[[*Ts], bool]
-   f6: Callable[[int, *Ts, str], bool]
 
 
 Runtime Behavior
