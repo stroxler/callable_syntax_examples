@@ -311,12 +311,12 @@ Here's what I'm pretty sure of:
 Things I'm less sure of
 
 - The type is immutable. Should it be hashable? That would further constrain our
-  hangling of ``async`` vs returning an ``Awaitable``.
+  handling of ``async`` vs returning an ``Awaitable``.
 - In the spirit of PEP 604, we *might* want to require that ``Callable`` and
   the new type can be compared to one another with ``.eq``, going in either direction.
   - The same question of whether to interpret ``async (str) -> str`` as equivalent
     to ``Callable[[str], Awaitable[str]]`` comes up. We should keep in mind the potential
-    to break transitivity of ``==`` if we answer this question inconsistently.
+    to break the transitivity of ``==`` if we answer this question inconsistently.
 
 To me the biggest concern is not abstract worries about the runtime behavior,
 but having a clear migration path for libraries that rely on type annotations at
