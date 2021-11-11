@@ -187,21 +187,14 @@ Of existing callable types [#callable-type-usage-stats]_,
 [#callable-type-usage-stats]_ and how often callbacks (whether or not they are typed) use call patterns requiring various features [#callback-usage-stats-typed]__
 We want to be sure that we support the most common uses of ``Callable``.
 
-In typed projects, when we look at the actual call patterns for callbacks [#typed-callback-usage]_, what we see is that
-* 69% use only positional arguments.
-* 9% pass along ``*args`` and ``**kwargs``, which can be made type-safe using ``ParamSpec``.
-* 10% pass along just ``*args``, which we can support using ``TypeVarTuple``.
+
+In typed / untyped projects respectively, when we look at the actual call patterns for callbacks [#callback-usage-stats]_ we see that
+* 69% (typed projects) / 43% (untyped projects) use only positional arguments.
+* 9% / 26%  pass along ``*args`` and ``**kwargs``, which can be made type-safe using ``ParamSpec``.
+* 10% / 4% pass along just ``*args``, which we can support using ``TypeVarTuple``.
 * The remainder make use of features that neither ``Callable`` nor our proposed syntax support.
 
-In untyped projects, which are less constrained by the existing features of ``Callable``, we see a different balance but a similar overall pattern:
-* 43% use only positional arguments.
-* 26% pass along ``*args`` and ``**kwargs`` and so would benefit from ``ParamSpec``.
-* 4% pass along just ``*args``.
-* The remainder use features that neither the current ``Callable`` nor our proposal support. And once again only about 2% are using named or default
-* 10% pass along just ``*args``, which we can support using ``TypeVarTuple``
-* The remainder make use of features that neither ``Callable`` nor our proposed syntax support.
-
-For both untyped *and* typed projects, the fraction of callbacks making use of named and/or optional arguments is around 2%. This is part of why we decided to propose a simple syntax supporting the same features as ``Callable`` rather than an extended syntax supporting named and optional arguments, which are currently possible to describe using callback protocols [#callback-protocols**_
+A special case that ``Callable`` cannot support is the use of named or optional (i.e. having a default value) arguments. These currently can be typed using callback protocols [#callback-protocols]_, but not the ``Callable`` type. For both typed and untyped projects, the fraction of callbacks using named or optional arguments is less than 2%.
 
 
 ==========================================
@@ -392,9 +385,7 @@ References
 
 .. [#callable-type-usage-stats] Callable type usage stats: https://github.com/pradeep90/annotation_collector#typed-projects---callable-type
 
-.. [#typed-callback-usage] Callback usage stats in typed projects: https://github.com/pradeep90/annotation_collector#typed-projects---callback-usage
-
-.. [#typed-callback-usage] Callback usage stats in typed projects: https://github.com/pradeep90/annotation_collector#typed-projects---callback-usage
+.. [#callback-usage-stats] Callback usage stats in open-source projects: https://github.com/pradeep90/annotation_collector#typed-projects---callback-usage
 
 .. [#pep-484-callable] Callable type as specified in PEP 484: https://www.python.org/dev/peps/pep-0484/#callable
 
