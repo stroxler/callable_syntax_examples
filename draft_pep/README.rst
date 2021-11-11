@@ -139,6 +139,38 @@ to be written
        ...
 
 
+TypeVarTuple
+------------
+
+Aside from ``...``, regular positional arguments, and ``ParamSpec`` / ``Concatenate``, the other feature supported by ``Callable`` right now is passing along arbitrary positional arguments ``*args`` as a tuple.
+
+This is made possible by PEP 646's ``TypeVarTuple``, for example:
+
+::
+    def call_target_with_args(
+        target: Callable[[Ts], bool],
+        args: Tuple[*Ts],
+    ) -> bool:
+        return target(*args)
+
+    def f(arg1: int, arg2: str) -> bool : ...
+
+    call_target_with_args(target=f, args=(0, 'foo'))  # Valid
+    call_target_with_args(target=f, args=('foo', 0))  # Error
+
+We propose using a similar single-splat syntax so that the code above could be written as
+
+::
+    def call_target_with_args(
+        target: (*Ts) -> bool,
+        args: Tuple[*Ts],
+    ) -> bool:
+        return target(*args)
+
+It is possible to include additional positional arguments around the ``*Ts``, which we would still support, e.g.  ``(int, *Ts, str) -> R`` should be equivalent to ``Callable[[int, *Ts, str], R]``.
+
+
+
 Usage Statistics
 ----------------
 
