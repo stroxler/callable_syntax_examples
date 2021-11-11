@@ -26,7 +26,8 @@ If we adopt this proposal, the following annotated variables
   f2: Callable[[str], Awaitlable[str]]
   f3: Callable[P, bool]
   f4: Callable[Concatenate[int, P], bool]
-  f5: Callable[[*Ts]]
+  f5: Callable[[*Ts], bool]
+  f6: Callable[[int, *Ts, str], bool]
 
 
 could be written instead as
@@ -41,6 +42,8 @@ could be written instead as
   f2: async (str) -> str
   f3: (**P) -> bool
   f4: (int, **P) -> bool
+  f5: (*Ts) -> bool
+  f6: (int, *Ts, str) -> bool
 
 
 Motivation
@@ -228,20 +231,65 @@ I can start from https://docs.google.com/document/d/1Ookl5s6LM1zZo5rSQpxiOfGknri
 Typing Behavior
 ---------------
 
+Inside of type checkers, the new syntax should be treated with exactly the same semantics as ``typing.Callable``.
 
-Runtime behavior
-================
+Going back to the examples from our abstract, type checkers should treat the following module
+::
+  from typing import ParamSpec, TypeVarTuple
 
+  P = ParamSpec("P")
+  Ts = = TypeVarTuple('Ts')
+
+  f0: (int, str) -> bool
+  f1: (...) -> bool
+  f2: async (str) -> str
+  f3: (**P) -> bool
+  f4: (int, **P) -> bool
+  f5: (*Ts) -> bool
+  f6: (int, *Ts, str) -> bool
+
+in exactly the same way as the same module written in terms of ``Callable``:
+::
+  from typing import Awaitable, Callable, Concatenate, ParamSpec, TypeVarTuple
+
+  P = ParamSpec("P")
+  Ts = = TypeVarTuple('Ts')
+
+  f0: TypeAlias Callable[[int, str], bool]
+  f1: Callable[..., bool]
+  f2: Callable[[str], Awaitlable[str]]
+  f3: Callable[P, bool]
+  f4: Callable[Concatenate[int, P], bool]
+  f5: Callable[[*Ts], bool]
+  f6: Callable[[int, *Ts, str], bool]
+
+
+Runtime Behavior
+----------------
 
 Rejected Alternatives
 =====================
 
-Use a Syntax As Similar as Possible to Signatures
--------------------------------------------------
+Syntax Closer to Function Signatures
+------------------------------------
 
-Propose an Extended Syntax to Include Named and Optional Arguments
-------------------------------------------------------------------
+Talk here about:
+- the motivation to avoid unfamiliar syntax
+- the basic idea
+- why we rejected it
+  - the requirement for / was considered a deal-breaker
+  - the inability to properly support ParamSpec following PEP 612 scope rules
+  - arg names would have meant more verbose, and nuisance parameters
 
+Extended Syntax Supporting Named and Optional Arguments
+-------------------------------------------------------
+
+Talk here about
+- the motivation to support named and optional arguments
+- opinions are mixed about whether this is worth doing, given that
+  - ~2% of use cases seem affected
+  - callback protocols work for this, and we could make them more ergonomic via functions-as-types
+- the proposal is backward compatible with the one we are making
 
 Reference Implementation
 ========================
