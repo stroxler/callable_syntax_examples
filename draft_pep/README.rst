@@ -1,6 +1,7 @@
 PEP: 9999
 Title: Callable Type Syntax
-Author: Steven Troxler <steven.troxler@gmail.com>
+Author: Steven Troxler <steven.troxler@gmail.com>,
+        Pradeep Kumar Srinivasan <gohanpra@gmail.com>
 Sponsor: TODO
 Status: Draft
 Type: Standards Track
