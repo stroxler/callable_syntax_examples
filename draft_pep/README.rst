@@ -391,77 +391,41 @@ TODO: ADD MANY MORE THANKS. (keep it alphabetical).
 References
 ==========
 
-.. [#typeshed-stats] Overall type usage for typeshed
+.. [#typeshed-stats] Overall type usage for typeshed: https://github.com/pradeep90/annotation_collector#overall-stats-in-typeshed
 
-    https://github.com/pradeep90/annotation_collector#overall-stats-in-typeshed
+.. [#callable-type-usage-stats] Callable type usage stats: https://github.com/pradeep90/annotation_collector#typed-projects---callable-type
 
-.. [#callable-type-usage-stats] Callable type usage stats
+.. [#typed-callback-usage] Callback usage stats in typed projects: https://github.com/pradeep90/annotation_collector#typed-projects---callback-usage
 
-    https://github.com/pradeep90/annotation_collector#typed-projects---callable-type
+.. [#typed-callback-usage] Callback usage stats in typed projects: https://github.com/pradeep90/annotation_collector#typed-projects---callback-usage
 
-.. [#typed-callback-usage] Callback usage stats in typed projects
+.. [#pep-484-callable] Callable type as specified in PEP 484: https://www.python.org/dev/peps/pep-0484/#callable
 
-    https://github.com/pradeep90/annotation_collector#typed-projects---callback-usage
+.. [#pep-484-function-type-hints] Function type hint comments, as outlined by PEP 484 for Python 2.7 code: https://www.python.org/dev/peps/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code
 
-.. [#typed-callback-usage] Callback usage stats in typed projects
+.. [#callback-protocols] Callback protocols: https://mypy.readthedocs.io/en/stable/protocols.html#callback-protocols
 
-    https://github.com/pradeep90/annotation_collector#typed-projects---callback-usage
+.. [#typing-sig-thread] Discussion of Callable syntax in the typing-sig mailing list: https://mail.python.org/archives/list/typing-sig@python.org/thread/3JNXLYH5VFPBNIVKT6FFBVVFCZO4GFR2/
 
-.. [#pep-484-callable] Callable type as specified in PEP 484
+.. [#callable-syntax-proposals-slides] Slides discussing potential Callable syntaxes (from 2021-09-20): https://www.dropbox.com/s/sshgtr4p30cs0vc/Python%20Callable%20Syntax%20Proposals.pdf?dl=0
 
-    https://www.python.org/dev/peps/pep-0484/#callable
+.. [#python-dev-thread] Discussion of new syntax on the python-dev mailing list: https://mail.python.org/archives/list/python-dev@python.org/thread/VBHJOS3LOXGVU6I4FABM6DKHH65GGCUB/
 
-.. [#pep-484-function-type-hints] Function type hint comments, as outlined by PEP 484 for Python 2.7 code
+.. [#callback-protocols] Callback protocols, as described in MyPy docs: https://mypy.readthedocs.io/en/stable/protocols.html#callback-protocols
 
-    https://www.python.org/dev/peps/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code
+.. [#sc-note-about-annotations] Steering Council note about type annotations and regular python: https://mail.python.org/archives/list/python-dev@python.org/message/SZLWVYV2HPLU6AH7DOUD7DWFUGBJGQAY/
 
-.. [#callback-protocols] Callback protocols
+.. [#type-syntax-simplification] Presentation on type syntax simplification from PyCon 2021: https://www.youtube.com/watch?v=ld9rwCvGdhc&t=8s
 
-    https://mypy.readthedocs.io/en/stable/protocols.html#callback-protocols
+.. [#python-grammar] Python's PEG grammar: https://docs.python.org/3/reference/grammar.html
 
-.. [#typing-sig-thread] Discussion of Callable syntax in the typing-sig mailing list.
+.. [#callable-syntax-grammar-doc] Google doc with BNF and PEG grammar for callable type syntax: https://docs.google.com/document/d/12201yww1dBIyS6s0FwdljM-EdYr6d1YdKplWjPSt1SE/edit
 
-    https://mail.python.org/archives/list/typing-sig@python.org/thread/3JNXLYH5VFPBNIVKT6FFBVVFCZO4GFR2/
+.. [#typescript] Callable types in TypeScript: https://basarat.gitbook.io/typescript/type-system/callable#arrow-syntax
 
-.. [#callable-syntax-proposals-slides] Slides discussing potential Callable syntaxes (from 2021-09-20)
+.. [#kotlin] Callable types in Kotlin: https://kotlinlang.org/docs/lambdas.html#function-types
 
-    https://www.dropbox.com/s/sshgtr4p30cs0vc/Python%20Callable%20Syntax%20Proposals.pdf?dl=0
-
-.. [#python-dev-thread] Discussion of new syntax on the python-dev mailing list
-
-    https://mail.python.org/archives/list/python-dev@python.org/thread/VBHJOS3LOXGVU6I4FABM6DKHH65GGCUB/
-
-.. [#callback-protocols] Callback protocols, as described in MyPy docs
-
-    https://mypy.readthedocs.io/en/stable/protocols.html#callback-protocols
-
-.. [#sc-note-about-annotations] Steering Council note about type annotations and regular python
-
-    https://mail.python.org/archives/list/python-dev@python.org/message/SZLWVYV2HPLU6AH7DOUD7DWFUGBJGQAY/
-
-.. [#type-syntax-simplification] Presentation on type syntax simplification from PyCon 2021
-
-    https://www.youtube.com/watch?v=ld9rwCvGdhc&t=8s
-
-.. [#python-grammar] Python's PEG grammar
-
-    https://docs.python.org/3/reference/grammar.html
-
-.. [#callable-syntax-grammar-doc] Google doc with BNF and PEG grammar for callable type syntax
-
-    https://docs.google.com/document/d/12201yww1dBIyS6s0FwdljM-EdYr6d1YdKplWjPSt1SE/edit
-
-.. [#typescript] Callable types in TypeScript
-
-    https://basarat.gitbook.io/typescript/type-system/callable#arrow-syntax
-
-.. [#kotlin] Callable types in Kotlin
-
-    https://kotlinlang.org/docs/lambdas.html#function-types
-
-.. [#flow] Callable types in Flow
-
-    https://flow.org/en/docs/types/functions/#toc-function-types
+.. [#flow] Callable types in Flow: https://flow.org/en/docs/types/functions/#toc-function-types
 
 Copyright
 =========
