@@ -51,7 +51,7 @@ Motivation
 
 The ``Callable`` type, defined as part of PEP 484, is one of the most commonly used complex types in ``typing`` alongside ``Union`` and collection types like ``Dict`` and ``List``.
 
-It is common for ``Callable`` types to become verbose. A simplified real-world example from an asyncrhonous webserver illustrates how the types can be verbose, and we can get many levels of nested square brackets::
+It is common for ``Callable`` types to become verbose. A simplified real-world example from an asynchronous webserver illustrates how the types can be verbose, and we can get many levels of nested square brackets::
 
     from typing import Callable, Awaitable
     from app_logic import ActionRecord, AuthPermission, Request, Response
@@ -81,7 +81,7 @@ This is shorter and requires fewer imports. It also has far less nesting of squa
 ParamSpec and Concatenate
 -------------------------
 
-The example above illustrates how we get a more concise and visually rich syntax for simple ``Callable`` types. We also proposing to incorporate ``ParamSpec`` support in the syntax because (in part due to decorators) one common use case of callables is to forward all arguments.
+The example above illustrates how we get a more concise and visually rich syntax for simple ``Callable`` types. We propose to incorporate ``ParamSpec`` support in the syntax because (in part due to decorators) one common use case of callables is to forward all arguments.
 
 
 With arrow-based ``Callable`` syntax this simple decorator
@@ -380,8 +380,9 @@ To sanity check the grammar, I used an online tool against a BNF variant, see [#
 
 Thanks to the following people for their feedback on the PEP:
 
-Guido Van Rossum, Pradeep Kumar Srinivasan, Eric Taub
-TODO: ADD MANY MORE THANKS. (keep it alphabetical).
+Guido Van Rossum, Eric Taub, Shannon Zhu
+
+TODO: Add many more thanks. Keep it alphabetical.
 
 
 References
