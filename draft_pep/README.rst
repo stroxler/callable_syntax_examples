@@ -148,7 +148,7 @@ QUESTION FOR EDITORS: what do I say about the fact that PEP 646 is still not acc
 Usage Statistics
 ----------------
 
-The ``Callable`` type is widely used. For example, in typeshed [#typeshed-stats]_ it is the fifth most common complex type, after ``Optional``, ``Tuple``, ``Union``, and ``List``. Most of these have gotten improved syntax either via PEP 604 or PEP 525. We believe ``Callable`` is heavily enough used to similarly justify a more usable syntax, particularly given that the need for two layers of square brackets in most ``Callable`` types.
+The ``Callable`` type is widely used. For example, in typeshed [#typeshed-stats]_ it is the fifth most common complex type, after ``Optional``, ``Tuple``, ``Union``, and ``List``. Most of these have gotten improved syntax either via PEP 604 or PEP 525. We believe ``Callable`` is heavily enough used to similarly justify a more usable syntax, particularly given the need for two layers of square brackets in most ``Callable`` types.
 
 
 Our decision to support ``ParamSpec``, ``Concatenate``, and ``TypeVarTuple`` is informed by looking at how frequently these features are used both in existing ``Callable`` types as well as in untyped callback functions.
