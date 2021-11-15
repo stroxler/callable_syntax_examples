@@ -24,6 +24,16 @@ Motivation
 
 The ``Callable`` type, defined as part of PEP 484, is one of the most commonly used complex types in ``typing`` alongside ``Union`` and collection types like ``Dict`` and ``List``.
 
+
+There are three major problems with the existing ``Callable`` type:
+- it is verbose, particularly for more complex function signatures.
+- it does not visually represent the way function headers are written.
+- it relies on two levels of nested square brackets. This can be quite hard to read,
+  especially when the function arguments themselves have square brackets.
+- it requres an explicit import, something we no longer require for most of the other
+  very common types after PEP 604 and PEP 525
+
+
 It is common for ``Callable`` types to become verbose. A simplified real-world example from an asynchronous webserver illustrates how the types can be verbose, and we can get many levels of nested square brackets::
 
     from typing import Callable, Awaitable
@@ -49,101 +59,6 @@ With our proposal, this code can be abbreviated to::
         ...
 
 This is shorter and requires fewer imports. It also has far less nesting of square brackets - only one level, as opposed to three in the original code.
-
-
-ParamSpec and Concatenate
--------------------------
-
-The example above illustrates how we get a more concise and visually rich syntax for simple ``Callable`` types. We propose to incorporate ``ParamSpec`` support in the syntax because (in part due to decorators) one common use case of callables is to forward all arguments.
-
-
-With arrow-based ``Callable`` syntax this simple decorator
-::
-    from typing import Callable, ParamSpec
-
-    P = ParamSpec("P")
-
-    def decorator(
-        f: Callable[P, bool],
-    ) -> Callable[P, bool]:
-        def wrapper(*args: P.args **kwargs: P.kwargs) -> bool:
-            return f(*args, **kwargs)
-        return wrapper
-
-
-can be written
-::
-    from typing import ParamSpec
-
-    P = ParamSpec("P")
-
-    def decorator(
-        f: (**P) -> bool
-    ) -> (**P) -> bool:
-        ...
-
-
-The resulting code is more concise. Moreover, the ``**P`` makes it obvious that ``P`` is not a positional argument type, whereas it is easier to misread ``Callable[P, bool]`` as ``Callable[[P], bool]``, particularly for developers who are not yet familiar with ``ParamSpec``.
-
-
-Our proposed syntax also supports ``Concatenate``. It would allow
-::
-    from typing import Callable, Concatenate, ParamSpec
-
-    P = ParamSpec("P")
-
-    def with_printing(
-       f: (**P) -> bool,
-    ) -> Callable[Concatenate[str, P], bool]
-        def wrapper(message: str, *args: P.args **kwargs: P.kwargs) -> bool:
-            print(message)
-            return f(*args, **kwargs)
-        return wrapper
-
-to be written
-::
-    from typing import ParamSpec
-
-    P = ParamSpec("P")
-
-    def with_printing(
-       f: (**P) -> bool,
-    ) -> (str, **P) -> bool:
-       ...
-
-
-TypeVarTuple
-------------
-
-According to PEP 646 ``Callable`` should support a splat syntax for passing ``*args`` along to a callback in a type-safe way using ``TypeVarTuple``. For example:
-
-::
-    from typing import Callable, Tuple, TypeVarTuple
-
-    def call_target_with_args(
-        target: Callable[[*Ts], bool],
-        args: Tuple[*Ts],
-    ) -> bool:
-        return target(*args)
-
-    def f(arg1: int, arg2: str) -> bool : ...
-
-    call_target_with_args(target=f, args=(0, 'foo'))  # Valid
-    call_target_with_args(target=f, args=('foo', 0))  # Error
-
-We propose using a similar single-splat syntax so that the code above could be written as
-
-::
-    from typing import Callable, Tuple, TypeVarTuple
-    def call_target_with_args(
-        target: (*Ts) -> bool,
-        args: Tuple[*Ts],
-    ) -> bool:
-        return target(*args)
-
-It is possible to include additional positional arguments around the ``*Ts``, which we would still support, e.g.  ``(int, *Ts, str) -> R`` should be equivalent to ``Callable[[int, *Ts, str], R]``.
-
-QUESTION FOR EDITORS: what do I say about the fact that PEP 646 is still not accepted, but that's because of the grammar changes - the specific functionality we're outlining here doesn't require the grammar changes that are the most controversial bit; it only really requires type checkers to understand ``TypeVarTuple``.
 
 Usage Statistics
 ----------------
