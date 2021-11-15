@@ -30,7 +30,7 @@ There are three major problems with the existing ``Callable`` type:
 - it does not visually represent the way function headers are written.
 - it relies on two levels of nested square brackets. This can be quite hard to read,
   especially when the function arguments themselves have square brackets.
-- it requres an explicit import, something we no longer require for most of the other
+- it requires an explicit import, something we no longer require for most of the other
   very common types after PEP 604 and PEP 525
 
 
@@ -283,7 +283,7 @@ References
 
 .. [#sc-note-about-annotations] Steering Council note about type annotations and regular python: https://mail.python.org/archives/list/python-dev@python.org/message/SZLWVYV2HPLU6AH7DOUD7DWFUGBJGQAY/
 
-.. [#type-syntax-simplification] Presentation on type syntax simplification from PyCon 2021: https://www.youtube.com/watch?v=ld9rwCvGdhc&t=8s
+.. [#type-syntax-simplification] Presentation on type syntax simplification from PyCon 2021: https://drive.google.com/drive/folders/1sGZ0WBLaVBkCb0AT7tneCEwbATxgisI2
 
 .. [#python-grammar] Python's PEG grammar: https://docs.python.org/3/reference/grammar.html
 
