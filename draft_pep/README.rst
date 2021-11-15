@@ -143,7 +143,7 @@ We propose using a similar single-splat syntax so that the code above could be w
 
 It is possible to include additional positional arguments around the ``*Ts``, which we would still support, e.g.  ``(int, *Ts, str) -> R`` should be equivalent to ``Callable[[int, *Ts, str], R]``.
 
-QUESTION FOR EDITORS: what do I say about the fact that PEP 646 is still not accepted, but that's because of the grammar changes - the specific functionality we're outlining here doesn't require the grammar changes that are the most controversial bit; it only really requires typecheckers to understand ``TypeVarTuple``.
+QUESTION FOR EDITORS: what do I say about the fact that PEP 646 is still not accepted, but that's because of the grammar changes - the specific functionality we're outlining here doesn't require the grammar changes that are the most controversial bit; it only really requires type checkers to understand ``TypeVarTuple``.
 
 Usage Statistics
 ----------------
@@ -179,34 +179,34 @@ Typing Behavior
 
 Inside of type checkers, the new syntax should be treated with exactly the same semantics as ``typing.Callable``.
 
-So a type checker should treat the following module::
-::
-    from typing import ParamSpec, TypeVarTuple
+So a type checker should treat the following pairs exactly the same::
+
+   from typing import Awaitable, Callable, Concatenate, ParamSpec, TypeVarTuple
 
     P = ParamSpec("P")
     Ts = = TypeVarTuple('Ts')
 
     f0: (int, str) -> bool
+    f0: TypeAlias Callable[[int, str], bool]
+
     f1: (...) -> bool
+    f1: Callable[..., bool]
+
     f2: async (str) -> str
+    f2: Callable[[str], Awaitlable[str]]
+
     f3: (**P) -> bool
+    f3: Callable[P, bool]
+
     f4: (int, **P) -> bool
+    f4: Callable[Concatenate[int, P], bool]
+
     f5: (*Ts) -> bool
+    f5: Callable[[*Ts], bool]
+
     f6: (int, *Ts, str) -> bool
+    f6: Callable[[int, *Ts, str], bool]
 
-in exactly the same way as the same module written in terms of ``Callable``::
-   from typing import Awaitable, Callable, Concatenate, ParamSpec, TypeVarTuple
-
-   P = ParamSpec("P")
-   Ts = = TypeVarTuple('Ts')
-
-   f0: TypeAlias Callable[[int, str], bool]
-   f1: Callable[..., bool]
-   f2: Callable[[str], Awaitlable[str]]
-   f3: Callable[P, bool]
-   f4: Callable[Concatenate[int, P], bool]
-   f5: Callable[[*Ts], bool]
-   f6: Callable[[int, *Ts, str], bool]
 
 Grammar
 -------
@@ -306,10 +306,17 @@ Talk here about
   - callback protocols work for this, and we could make them more ergonomic via functions-as-types
 - the proposal is backward compatible with the one we are making
 
+Backwards Compatibility
+=======================
+
+TODO
+
+Does this PEP intend to replace ``typing.Callable``?
+
 Reference Implementation
 ========================
 
-TODO. This will require a fork of CPython with the new grammar.
+TODO. This will require a fork of CPython with the new grammar. Example: https://github.com/mrahtz/cpython/commits/pep646-grammar
 
 
 Resources
@@ -328,11 +335,10 @@ Kotlin uses ``->`` [#kotlin]_
 Typescript uses ``=>`` [#typescript]_
 Flow uses ``=>`` [#flow]_
 
-To sanity check the grammar, I used an online tool against a BNF variant, see [#callable-syntax-grammar-doc]_
 
 Thanks to the following people for their feedback on the PEP:
 
-Guido Van Rossum, Eric Taub, Shannon Zhu
+Guido Van Rossum, Eric Traut, Shannon Zhu
 
 TODO: Add many more thanks. Keep it alphabetical.
 
