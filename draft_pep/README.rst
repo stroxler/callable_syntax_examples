@@ -227,12 +227,27 @@ Trailing commas
     (int, **P,) -> bool
     (int, **P) -> bool
 
-* and **
-‘’’’’’’’
+Disallowing ``...`` as an Argument Type
+‘’’’’’’’’’’’’’’‘’’’’’’’’’’’’’’‘’’’’’’’’
+
+Under normal circumstances, any valid expression is permitted where we want a type annotation and ``...`` is a valid expression. This is never semantically valid and all type checkers would reject it, but the grammar would allow it if we didn’t explicitly prevent this.
+
+We decided that there were compelling reasons to prevent it:
+- The semantics of ``(...) -> bool`` are different from ``(T) -> bool`` for any valid type T: ``(...)`` is a special form indicating ``AnyArguments`` whereas ``T`` is a type parameter in the arguments list.
+  - Without special handling, we would either have to allow ``(...,) -> bool`` for ``AnyArguments``, which we find confusing, or we would have ``(...) -> bool !=  (...,) -> bool`` which is unacceptable.
+- ``...`` is used as a placeholder default value to indicate an optional argument in stubs and Callback Protocols. Allowing it in the position of a type could easily lead to confusion and possibly bugs due to typos.
+
+Since ``...`` is meaningless as a type and there are usability concerns, our grammar rules it out and the following examples are syntax errors::
+
+    (...,) -> bool
+    (int, ...) -> bool
+
+Incompatibility with other possible uses of ``*` and ``**``
+‘’’’’’’‘’’’’’’‘’’’’’’‘’’’’’’‘‘’’’’’’‘’’’’’’‘’‘’’’’’’‘’’‘’’’’
 
 The use of ``**P`` for supporting PEP 612 ``ParamSpec`` rules out any future proposal using a bare ``**<some_type>`` to type ``kwargs``. This seems acceptable because:
 - If we ever do want such a syntax, it would be clearer and to require an argument name anyway so that the type looks more similar to a function signature. In other words, if we ever support typing ``kwargs`` in callable types, we would prefer ``(int, **kwargs: str)`` rather than ``(int, **str)``.
-- PEP 646 unpack syntax would rule out using ``*<some_type>`` for ``args``, and the ``kwargs`` case is similar enough that this rules out a bare ``**<some_type>>` anyway.
+- PEP 646 unpack syntax would rule out using ``*<some_type>`` for ``args``, and the ``kwargs`` case is similar enough that this rules out a bare ``**<some_type>` anyway.
 
 Runtime Behavior
 ----------------
@@ -253,11 +268,11 @@ Rejected Alternatives
 Many of the alternatives we considered would have been more expressive than ``typing.Callable``, for example adding support for describing signatures that include named, optional, and variadic arguments.
 
 We decided on a simple proposal focused just on improving syntax for the existing ``Callable`` type based on an extensive analysis of existing projects (see [#callable-type-usage-stats]_, [#callback-usage-stats-typed]_, [#callback-usage-stats]_). We determined that the vast majority of callbacks can be correctly described by the existing ``typing.Callable`` semantics:
-- Positional parameters: By far the most important case to handle well is simple callable types with positional parameters args, such as ``(int, str) -> bool``
+- Positional parameters: By far the most important case to handle well is simple callable types with positional parameters, such as ``(int, str) -> bool``
 - ParamSpec and Concatenate: The next most important feature is good support for PEP 612 ``ParamSpec`` and ``Concatenate`` types like ``(**P) -> bool`` and ``(int, **P) -> bool``. These are common primarily because of the heavy use of decorator patterns in python code.
 - TypeVarTuples: The next most important feature, assuming PEP 646 is accepted, is for unpacked types which are common because of cases where a wrapper passes along `*args` to some other function.
 
-Features that other, more complicated proposals would support account for fewer than 2% of the use cases we found. These are already expressiblepossible using `Callback Protocols <https://www.python.org/dev/peps/pep-0544/#callback-protocols>`_, and since they aren’t common we decided that it made more sense to move forward with a simpler syntax.
+Features that other, more complicated proposals would support account for fewer than 2% of the use cases we found. These are already expressibleusing `Callback Protocols <https://www.python.org/dev/peps/pep-0544/#callback-protocols>`_, and since they aren’t common we decided that it made more sense to move forward with a simpler syntax.
 
 Extended Syntax Supporting Named and Optional Arguments
 -------------------------------------------------------
@@ -309,31 +324,6 @@ Key downsides that led us to reject the idea include the following:
 - Our analysis suggests that support for ``ParamSpec`` is key, but the scope rules laid out in PEP 612 would have made this difficult.
 
 
-Extended Syntax Supporting Named and Optional Arguments
--------------------------------------------------------
-
-Another alternative was for a compatible but more complex syntax that could express everything in this PEP but also named, optional, and variadic arguments. In this “extended” syntax proposal the following types would have been equivalent::
-
-    class Function(typing.Protocol):
-        def f(self, x: int, /, y: float, *, z: bool = ..., **kwargs: str) -> bool:
-            ...
-
-    Function = (int, y: float, *, z: bool = ..., **kwargs: str) -> bool
-
-Advantages of this syntax include:
-- Most of the advantages of the proposal in this PEP (conciseness, PEP 612 support, etc)
-- Furthermore, the ability to handle named, optional, and variadic arguments
-
-We decided against proposing it for the following reasons:
-- The implementation would have been more difficult, and usage stats demonstrate that fewer than 3% of use cases would benefit from any of the added features.
-- The group that debated these proposals was split down the middle about whether these changes are even desirable:
-  - On the one hand they make callable types more expressive, but on the other hand they could easily confuse users who haven’t read the full specification of callable type syntax.
-  - We believe the simpler syntax proposed in this PEP, which introduces no new semantics and closely mimics syntax in other popular languages like Kotlin, Scala, and TypesScript, are much less likely to confuse users.
-- We intend to implement the current proposal in a way that is forward-compatible with the more complicated extended syntax. So if the community decides after more experience and discussion that we want the additional features they should be straightforward to propose in the future.
-- We realized that because of overloads, it is not possible to replace all need for Callback Protocols even with an extended syntax. This makes us prefer proposing a simple solution that handles most use cases well.
-
-We confirmed that the current proposal is forward-compatible with extended syntax by implementing a quick-and-dirty grammar and AST on top of the grammar and AST for the current proposal [#callable-type-syntax--extended]_.
-
 Other Proposals we Considered
 -----------------------------
 
@@ -341,7 +331,7 @@ We considered a parameter-less syntax::
 
     int, str -> bool
 
-This wasn’t visually as similar to existing function header syntax. Moreover, if Python ever adds syntax for lambdas, it since lambda parameters have no parentheses it might make sense to reserve ``->`` without parentheses as a possible syntax for lambdas since existing lambda parameters have no parentheses: ``lambda x, y: x == y``. This is in fact almost exactly what Kotlin does [#kotlin]_.
+This wasn’t visually as similar to existing function header syntax. Moreover, it is visually similar to lambdas, which bind names with no parentheses: ``lambda x, y: x == y``.
 
 We considered proposing a new “special string” syntax an puting the type inside of it, for example ``t”(int, str) -> bool”``. We rejected this because it is not as readable, and it doesn’t seem in line with guidance from the Steering Council on ensuring that type expressions do not diverge from the rest of Python syntax. [#python-types-and-runtime-guidance]_
 
@@ -476,4 +466,5 @@ CC0-1.0-Universal license, whichever is more permissive.
    fill-column: 70
    coding: utf-8
    End:
+
 
