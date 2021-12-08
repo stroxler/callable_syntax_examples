@@ -15,7 +15,7 @@ Abstract
 
 This PEP introduces a concise and friendly syntax for callable types, supporting the same functionality as ``typing.Callable`` but with an arrow syntax inspired by the syntax for typed function signatures. This allows types like ``Callable[[int, str], bool]`` to be written ``(int, str) -> bool``.
 
-The proposed syntax supports all the functionality of the existing ``Callable`` type and could eventually replace it.
+The proposed syntax supports all the functionality provided by ``typing.Callable`` and ``typing.Concatenate`` and could eventually replace them entirely.
 
 
 Motivation
