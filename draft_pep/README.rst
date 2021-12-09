@@ -321,17 +321,21 @@ Key downsides that led us to reject the idea include the following:
 - Our analysis suggests that support for ``ParamSpec`` is key, but the scope rules laid out in PEP 612 would have made this difficult.
 
 
-Other Proposals we Considered
------------------------------
+Other Proposals Considered
+--------------------------
 
-We considered a parameter-less syntax::
+An idea we looked at very early on was to allow using functions as types. This may be a great idea, but we consider less an alternative to better callable types than a major improvement in the usability of Callable Protocols:
+- Using functions as types wouldn’t give us a new way of describing function types as first class values. Instead, they would require a function definition statement that effectively defines a type alias (much as a Callable Protocol class statement does).
+- Functions-as-types would support almost exactly the same features that Callable Protocols do today: named, optional, and variadic args as well as the ability to define overloads.
+So we think that is an idea for a related PEP, but not a direct substitute for improved Callable syntax.
+
+We considered a parentheses-free syntax that would have been even more concise::
 
     int, str -> bool
 
-This wasn’t visually as similar to existing function header syntax. Moreover, it is visually similar to lambdas, which bind names with no parentheses: ``lambda x, y: x == y``.
+We decided against it because this is not visually as similar to existing function header syntax. Moreover, it is visually similar to lambdas, which bind names with no parentheses: ``lambda x, y: x == y``.
 
-We considered proposing a new “special string” syntax an puting the type inside of it, for example ``t”(int, str) -> bool”``. We rejected this because it is not as readable, and it doesn’t seem in line with guidance from the Steering Council on ensuring that type expressions do not diverge from the rest of Python syntax. [#python-types-and-runtime-guidance]_
-
+Another idea was a new “special string” syntax an puting the type inside of it, for example ``t”(int, str) -> bool”``. We rejected this because it is not as readable, and it doesn’t seem in line with guidance from the Steering Council on ensuring that type expressions do not diverge from the rest of Python syntax. [#python-types-and-runtime-guidance]_
 
 
 
