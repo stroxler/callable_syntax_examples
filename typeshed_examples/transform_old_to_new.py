@@ -62,8 +62,8 @@ class CallableToCallableSyntaxTransformer(libcst.CSTTransformer):
             updated_node.value, libcst.matchers.Name("Callable")
         ):
             return self.callable_to_new_syntax_as_string(
-                parameters=original_node.slice[0].slice.value,
-                return_type=original_node.slice[1].slice.value,
+                parameters=updated_node.slice[0].slice.value,
+                return_type=updated_node.slice[1].slice.value,
             )
         return original_node
 
