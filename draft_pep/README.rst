@@ -352,21 +352,31 @@ Reference Implementation
 
 We have a working implementation of the AST and Grammar [#callable-type-syntax--shorthand]_ with tests verifying that the grammar proposed here has the desired behaviors.
 
-There is no runtime implementation yet, but we have a detailed specification of the planned implementation [#runtime-behavior-specification]_, including
-- The new builtin types and evaluation model for the AST.
-- How to make the builtin types backward-compatible with ``typing.Callable``.
+There is no runtime implementation yet. At a high level we are committed to the following by backward compatibility:
+- We will need new object types for both the callable type and concatenation type, tentatively defined in C and exposed as ``types.CallableType`` and ``types.CallableConcatenateType`` in a manner similar to ``types.UnionType``.
+- The new types must support existing ``typing.Callable`` and ``typing.Concatenate`` runtime apis almost exactly
+  - The ``__repr__`` methods will differ and display the new builtin syntax
+  - But the ``__args__`` and ``__parameters__`` fields must behave the same
+  - And the indexing operation - which returns a new type object with concrete types substituted for various entries in ``__parameters__``, must also be the same.
 
-Key question: what should the runtime API look like?
-----------------------------------------------------
+We will return to more details of the runtime behavior, which remain open to discussion other than backward compatibility, in the Open Issues section below.
 
-Maintaining backward compatibility with ``typing.Callable`` is a key requirement for the runtime implementation, but we have some freedom with regard to exposing a more structured API.
-
-Our tentative plan is to have the runtime data look similar to the AST (e.g. with an ``args`` field in the callable type).
-
-Another idea was to mimic the API of ``inspect.Signature`` instead. We do not currently plan to do this, although we will ensure that for any callable type ``t`` ``inspect.signature(t)`` behaves well. But we are open to reconsidering based on feedback.
 
 Open Issues
 ===========
+
+Details of the Runtime API
+--------------------------
+
+The new runtime objects to which this syntax evaluates will remain backward-compatible with the ``typing.Callable`` and ``typing.Concatenate`` types they replace, other than details like ``__repr__`` where some behavior change makes sense.
+
+But we also believe that we should have a new runtime API with more structured data access, since:
+- Callable types have a more complicated shape than other generics, especially given the behavior when using ``...`` and ``typing.Concatenate``
+- In the future we might want to add more features, such as support for named and optional arguments, that would be even more difficult to describe well using only ``__args__`` and ``__parameters___``.
+
+Our tentative plan is to define enough new builtins for the runtime data to mirror the shape of the AST, but other options are also possible. See [#runtime-behavior-specification]_ for a detailed description of the current plan and a place to discuss other ideas.
+
+Once the runtime behavior is fully defined we will add a complete evaluation model and description of behavior to this PEP.
 
 Optimizing ``SyntaxError`` messages
 -----------------------------------
@@ -375,7 +385,7 @@ The current reference implementation has a fully-functional parser and all edge 
 
 But there are some known cases where the errors are not as informative as we would like. For example, because ``(int, ...) -> bool`` is illegal but ``(int, ...)`` is a valid tuple, we currently produce a syntax error flagging the ``->`` as the problem even though the real cause of the error is using ``...`` as an argument type.
 
-This is not part of the specification per se but is an important detail to address in our implementation. The solution will likely involve adding ``invalid_*`` rules to ``python.gram`` and customizing error messages.
+This is not part of the specification per se but is an important detail to add  ress in our implementation. The solution will likely involve adding ``invalid_.*`` rules to ``python.gram`` and customizing error messages.
 
 Resources
 =========
