@@ -1,5 +1,6 @@
 import functools
 import os
+import sys
 
 from typing import Union
 
@@ -49,51 +50,56 @@ class CallableToCallableSyntaxTransformer(libcst.CSTTransformer):
     def leave_Subscript(
         self,
         original_node: libcst.Subscript,
-        updated_node: Union[libcst.Tuple, libcst.Subscript, libcst.SimpleString],
-    ):
+        updated_node: libcst.Subscript,
+    ) -> Union[libcst.BinaryOperation, libcst.Subscript]:
         if libcst.matchers.matches(
             updated_node.value, libcst.matchers.Name("Concatenate")
         ):
-            return self.concatenate_to_new_syntax_as_string(
-                parameters=updated_node.slice,
+            raise NotImplementedError(
+                "There are currently no Concatenates in our examples, deferring implementation"
             )
-            import pudb; pudb.set_trace()
         if libcst.matchers.matches(
             updated_node.value, libcst.matchers.Name("Callable")
         ):
             return self.callable_to_new_syntax_as_string(
-                parameters=updated_node.slice[0].slice.value
-                returns=updated_node.slice[1].slice.value
+                parameters=original_node.slice[0].slice.value,
+                return_type=original_node.slice[1].slice.value,
             )
-            import pudb; pudb.set_trace()
         return original_node
-
-    def concatenate_to_new_syntax_as_string(
-        self,
-        parameters: List[libcst.SubscriptElement]
-    ) -> FILL_ME:
-        FILL_ME
 
     def callable_to_new_syntax_as_string(
         self,
         parameters: Union[libcst.Tuple, libcst.Ellipsis, libcst.List],
-        return_type: libcst.Node,
-    ) -> LibCST.SimpleString:
+        return_type: libcst.CSTNode,
+    ) -> libcst.BinaryOperation:
         if libcst.matchers.matches(
-            parameters, libcst.Tuple:
+            parameters, libcst.matchers.Name()
         ):
-            parameters_as_tuple = parameters
+            transformed_parameters = libcst.Tuple(
+                elements=[
+                    libcst.Element(libcst.SimpleString("'**'")),
+                    libcst.Element(parameters)
+                ]
+            )
         elif libcst.matchers.matches(
-            parameters, libcst.Ellipses:
+            parameters, libcst.matchers.Tuple()
         ):
-            parameters_as_tuple = libcst.Tuple(elements=libcst.Ellipsis())
+            transformed_parameters = parameters
         elif libcst.matchers.matches(
-            parameters, libcst.List:
+            parameters, libcst.matchers.Ellipsis()
         ):
-            parameters_as_tuple = libcst.Tuple(elements=parameters.elements)
-        parameters_as_tuple_str = code_for_node(parameters_as_tuple)
-        return_type_str = code_for_node(return_type)
-        return libcst.SimpleString(f"'<ct>{parameters_as_tuple_str} -> {return_type_str}<ct>'")
+            transformed_parameters = libcst.Ellipsis(lpar=[libcst.LeftParen()], rpar=[libcst.RightParen()])
+        elif libcst.matchers.matches(
+            parameters, libcst.matchers.List()
+        ):
+            transformed_parameters = libcst.Tuple(elements=parameters.elements)
+        else:
+            raise RuntimeError("oops")
+        return libcst.BinaryOperation(
+            left=transformed_parameters,
+            right=return_type,
+            operator=libcst.Add(),
+        )
 
 
 
@@ -102,15 +108,23 @@ class CallableToCallableSyntaxTransformer(libcst.CSTTransformer):
 
 transformed_lines = []
 for line in lines:
-    print(line)
-    _current_line = line
-    original_tree = libcst.parse_module(line)
-    transformed_tree = original_tree.visit(
-        CallableToCallableSyntaxTransformer()
-    )
-    transformed_line_as_ct_string = transformed_tree.code
-    print(transformed_line_as_ct_string)
-    import pudb; pudb.set_trace()
+    try:
+        print(line)
+        _current_line = line
+        original_tree = libcst.parse_module(line)
+        transformed_tree = original_tree.visit(
+            CallableToCallableSyntaxTransformer()
+        )
+        raw_transformed_line = transformed_tree.code
+        transformed_line = (
+            raw_transformed_line.replace("'**', ", "**").replace("+", "->")
+        )
+        print(transformed_line)
+        transformed_lines.append(transformed_line)
+        print()
+    except Exception as e:
+        _, _, tb = sys.exc_info()
+        import pudb; pudb.post_mortem(tb)
 
 
 
