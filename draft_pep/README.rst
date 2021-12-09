@@ -340,7 +340,7 @@ Backwards Compatibility
 
 This PEP proposes a major syntax improvement over ``typing.Callable``, but the static semantics are the same.
 
-As such, the only thing we need for backward compatibility is to ensure that types specified via the new syntax behave the same as equivalent ``typing.Callable`` values.
+As such, the only thing we need for backward compatibility is to ensure that types specified via the new syntax behave the same as equivalent ``typing.Callable`` and ``typing.Concatenate`` values they intend to replace.
 
 There’s no particular interaction between this proposal and ``from __future__ import annotations`` - just like any other type annotation it will be unparsed to a string at module import, and ``typing.get_type_hints`` should correctly evaluate the resulting strings in cases where that is possible.
 
