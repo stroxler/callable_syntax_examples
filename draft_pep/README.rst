@@ -365,6 +365,9 @@ Our tentative plan is to have the runtime data look similar to the AST (e.g. wit
 
 Another idea was to mimic the API of ``inspect.Signature`` instead. We do not currently plan to do this, although we will ensure that for any callable type ``t`` ``inspect.signature(t)`` behaves well. But we are open to reconsidering based on feedback.
 
+
+
+
 Resources
 =========
 
@@ -377,6 +380,7 @@ PEP 484 [#pep-484-function-type-hints]_ specifies a very similar syntax for func
         # type: (int, str) -> bool
         ...
 
+At that time we used indexing operations to specify generic types like ``typing.Callable`` because we decided not to add syntax for types, but we have since begun to do so, e.g. with PEP 604
 
 **Maggie** proposed better callable type syntax at the PyCon Typing Summit 2021: [#type-syntax-simplification]_ ([#type-variables-for-all-slides]_).
 
