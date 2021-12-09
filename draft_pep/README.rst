@@ -90,7 +90,7 @@ So a type checker should treat the following pairs exactly the same::
     Ts = = TypeVarTuple('Ts')
 
     f0: (int, str) -> bool
-    f0: TypeAlias Callable[[int, str], bool]
+    f0: Callable[[int, str], bool]
     
     f1: (...) -> bool
     f1: Callable[..., bool]
@@ -137,7 +137,7 @@ Here are our proposed changes to the [#python-grammar]_::
         | ASYNC callable_type_arguments '->' expression
 
     callable_type_arguments:
-        | '(' '...' ')'
+        | '(' '...' [','] ')'
         | '(' callable_type_positional_argument*  ')'
         | '(' callable_type_positional_argument* callable_type_param_spec ')'
 
@@ -192,9 +192,13 @@ Because operators bind more tightly than ``->``, parentheses are required whenev
     (int) -> bool | (() -> bool)  # okay
 
 
+We discussed each of these behaviors and believe they are desirable:
+- Union types (represented by ``A | B`` according to PEP 604) are valid in function signature returns, so we need to allow operators in the return position for consistency.
+- Given that operators bind more tightly than ``->`` it is correct that a type like ```bool | () -> bool`` must be a syntax error. We should be sure the error message is clear because this may be a common mistake.
+- Associating ``->`` to the right, rather than requiring explicit parentheses, is consistent with other languages like TypeScript and respects the principle that valid expressions should normally be substitutable when possible.
 
-async Keyword
-‘’’’’’’’’’’’’
+``async`` Keyword
+‘’’’’’’’’’’’’’’’’
 
 All of the binding rules still work for async callable types::
 
@@ -207,25 +211,20 @@ All of the binding rules still work for async callable types::
     def f() -> async (int) -> async (str) -> bool: pass
     def f() -> (async (int) -> (async (str) -> bool)): pass
 
-We discussed each of these edge cases and prefer this behavior:
-- Union types (represented by ``A | B`` according to PEP 604) are valid in function signature returns, so the only reasonable option is to allow them in return position of callable types.
-- Given that ``|`` binds more tightly, a type like ``bool | () -> bool`` should indeed be a syntax error.
-  - The same is true of other operators like ``*``. These currently carry no semantic meaning in types but bind more tightly in the syntax.
-  - This also implies that they would bind more tightly than ``->`` if we were to give them meaning in the future (for example, ``&`` may someday be used for intersection types).
-- Associating ``->`` to the right, rather than requiring explicit parentheses, is consistent with other languages like TypeScript and respects the principle that valid expressions should normally be substitutable when possible.
 
-Trailing commas
+Trailing Commas
 ‘’’’’’’’’’’’’’’
 
-- Trailing commas are legal in function signatures (including after **kwargs), so they are legal in callable types. As with function signatures ``(,) -> bool`` is not legal, an empty arguments list must be written with no comma.::
+- Following the precedent of function signatures, putting a comma in an empty arguments list is illegal, ``(,) -> bool`` is a syntax error.
+- Again following precedent, trailing commas are otherwise always permitted::
 
-    # Trailing commas are permitted after positional args and ParamSpecs::
 
-    (int,) -> bool
-    (int) -> bool
+    ((int,) -> bool == (int) -> bool
+    ((int, **P,) -> bool == (int, **P) -> bool
+    ((...,) -> bool) == ((...) -> bool)
+ 
+Allowing trailing commas also gives autoformatters more flexibility when splitting callable types across lines, which is always legal following standard python whitespace rules.
 
-    (int, **P,) -> bool
-    (int, **P) -> bool
 
 Disallowing ``...`` as an Argument Type
 ‘’’’’’’’’’’’’’’‘’’’’’’’’’’’’’’‘’’’’’’’’
@@ -234,12 +233,10 @@ Under normal circumstances, any valid expression is permitted where we want a ty
 
 We decided that there were compelling reasons to prevent it:
 - The semantics of ``(...) -> bool`` are different from ``(T) -> bool`` for any valid type T: ``(...)`` is a special form indicating ``AnyArguments`` whereas ``T`` is a type parameter in the arguments list.
-  - Without special handling, we would either have to allow ``(...,) -> bool`` for ``AnyArguments``, which we find confusing, or we would have ``(...) -> bool !=  (...,) -> bool`` which is unacceptable.
 - ``...`` is used as a placeholder default value to indicate an optional argument in stubs and Callback Protocols. Allowing it in the position of a type could easily lead to confusion and possibly bugs due to typos.
 
-Since ``...`` is meaningless as a type and there are usability concerns, our grammar rules it out and the following examples are syntax errors::
+Since ``...`` is meaningless as a type and there are usability concerns, our grammar rules it out and the following is a syntax error::
 
-    (...,) -> bool
     (int, ...) -> bool
 
 Incompatibility with other possible uses of ``*` and ``**``
@@ -259,7 +256,7 @@ We have a separate doc [#runtime-behavior-specification]_ with a very detailed t
 In short, the plan is that:
 - The `__repr__` will show an arrow syntax literal.
 - We will provide a new API where the runtime data structure can be accessed in the same manner as the AST data structure.
-- We will ensure that we provide an API that is backward-compatible with ``typing.Callable`` and ``typing.Concatenate``, specifically the behavior of ``__args__`` and ``__params__``.
+- We will ensure that we provide an API that is backward-compatible with ``typing.Callable`` and ``typing.Concatenate``, specifically the behavior of ``__args__`` and ``__parameters__``.
 
 
 Rejected Alternatives
