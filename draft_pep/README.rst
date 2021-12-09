@@ -365,8 +365,17 @@ Our tentative plan is to have the runtime data look similar to the AST (e.g. wit
 
 Another idea was to mimic the API of ``inspect.Signature`` instead. We do not currently plan to do this, although we will ensure that for any callable type ``t`` ``inspect.signature(t)`` behaves well. But we are open to reconsidering based on feedback.
 
+Open Issues
+===========
 
+Optimizing ``SyntaxError`` messages
+-----------------------------------
 
+The current reference implementation has a fully-functional parser and all edge cases presented here have been tested.
+
+But there are some known cases where the errors are not as informative as we would like. For example, because ``(int, ...) -> bool`` is illegal but ``(int, ...)`` is a valid tuple, we currently produce a syntax error flagging the ``->`` as the problem even though the real cause of the error is using ``...`` as an argument type.
+
+This is not part of the specification per se but is an important detail to address in our implementation. The solution will likely involve adding ``invalid_`` rules to ``python.gram`` and customizing error messages.
 
 Resources
 =========
