@@ -117,7 +117,13 @@ for line in lines:
         )
         raw_transformed_line = transformed_tree.code
         transformed_line = (
-            raw_transformed_line.replace("'**', ", "**").replace("+", "->")
+            raw_transformed_line
+            # we're using + in place of ->, convert it
+            .replace("+", "->")
+            # convert our hacked unpack marker into a new-style ParamSpec unpack
+            .replace("'**', ", "**")
+            # remove trailing commas that libcst has to add to size-1 tuples
+            .replace(",)", ")")
         )
         print(transformed_line)
         transformed_lines.append(transformed_line)

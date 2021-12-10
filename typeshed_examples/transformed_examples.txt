@@ -23,142 +23,142 @@
 () -> int
 () -> str
 () -> streams.StreamReaderProtocol
-(AnyStr,) -> AnyStr
-(AnyStr,) -> Any
-(Any,) -> Any
-(Any,) -> None
-(Any,) -> Optional[MutableMapping[_KT, Any]]
-(Any,) -> _R
-(Any,) -> _T
-(Any,) -> _reducedtype
-(Any,) -> bool
-(Any,) -> str
-(BaseException,) -> None
-((...) -> Any,) -> (...) -> Any
-((...) -> Any,) -> Command
-((...) -> Any,) -> Group
-((...) -> Generator[Any, Any, Any],) -> (...) -> None
-((...) -> _T,) -> (...) -> _T
-((...) -> _T,) -> _lru_cache_wrapper[_T]
-(Channel,) -> None
-(ContentRange,) -> Any
-(Dict[Any, Any],) -> Any
-(Dict[str, Any],) -> Any
-(Dict[str, Any],) -> None
-(Distribution,) -> None
-(DocTest,) -> Any
-(Element,) -> Text
-(Event[Canvas],) -> Any
-(Event[Misc],) -> Any
-(Event[Text],) -> Any
-(Event[_W],) -> Any
-(Future[_T],) -> Any
-(HeaderSet,) -> Any
-(IO[Any],) -> BabylMessage
-(IO[Any],) -> MHMessage
-(IO[Any],) -> MMDFMessage
-(IO[Any],) -> MaildirMessage
-(IO[Any],) -> _MessageT
-(IO[Any],) -> mboxMessage
-(Iterable[Tuple[Text, Text]],) -> _T
-(List[Any],) -> _T
-(List[TestCase],) -> TestSuite
-(List[Tuple[Any, Any]],) -> Any
-(List[Tuple[str, Any]],) -> Any
-(List[Tuple[str, Any]],) -> _T
-(MIMEApplication,) -> None
-(MIMEAudio,) -> None
-(MIMEImage,) -> None
-(Match[AnyStr],) -> AnyStr
-(Match[_AnyStr2],) -> _AnyStr2
-(Message,) -> None
-(None,) -> Any
-(None,) -> None
-(OSError,) -> Any
-(Optional[BaseException],) -> None
-(Optional[Exception],) -> Any
-(Optional[Exception],) -> _T
-(Optional[List[Tuple[str, float]]],) -> _T
-(Optional[float],) -> struct_time
-(Optional[str],) -> Any
-(Path,) -> bool
-(PreparedRequest,) -> PreparedRequest
-(ReadableBuffer,) -> _Hash
-(ReferenceType[_T],) -> Any
-(RequestCacheControl,) -> Any
-(Requirement,) -> _T
-(Response,) -> Response
-(Sequence[_KT],) -> _KT
-(Sequence[_T],) -> _T
-(Sequence[int],) -> bytes
-(Sized,) -> int
-(StringVar,) -> Any
-(TarInfo,) -> Optional[TarInfo]
-(Tuple[int, str, _Pos, _Pos, str],) -> None
-(Type[_T],) -> Type[_T]
-(UnicodeError,) -> Tuple[Union[str, bytes], int]
-(Unpickler,) -> None
-(UnraisableHookArgs,) -> Any
-(WWWAuthenticate,) -> Any
-(_AnyCallable,) -> _AnyCallable
-(_C,) -> Any
-(_ExceptHookArgs,) -> Any
-(_FT,) -> _FT
-(_F,) -> _F
-(_KT,) -> None
-(_KT,) -> _VT
-(_Reduce[_TypeT],) -> _TypeT
-(_ReprFunc,) -> _ReprFunc
-(_S,) -> Any
-(_S,) -> _T
-(_T1,) -> SupportsLessThan
-(_T1,) -> _S
-(_T1,) -> _T2
-(_T,) -> Any
-(_T,) -> None
-(_T,) -> SupportsLessThan
-(_T,) -> Union[int, float, str, bytes]
-(_T,) -> _S
-(_T,) -> _T
-(_T,) -> bool
-(_T,) -> str
-(_TypeT,) -> Union[str, _Reduce[_TypeT]]
-(_VT,) -> _VT
-(_VT,) -> float
-(_V,) -> _R
-(_str,) -> float
-(_timerFunc,) -> _timerFunc
-(bool,) -> None
-(bytes,) -> Any
-(bytes,) -> None
-(bytes,) -> Optional[bytes]
-(bytes,) -> _HashType
-(bytes,) -> bytes
-(float,) -> None
-(float,) -> _ScoreCastFuncReturn
-(futures.Future[Any],) -> None
-(int,) -> Any
-(int,) -> None
-(int,) -> Tuple[_Text, ...]
-(int,) -> Tuple[str, ...]
-(int,) -> int
-(object,) -> Any
-(object,) -> str
-(str,) -> Any
-(str,) -> None
-(str,) -> Optional[CodecInfo]
-(str,) -> _R
-(str,) -> _T
-(str,) -> bool
-(str,) -> float
-(str,) -> importlib.abc.PathEntryFinder
-(str,) -> int
-(str,) -> str
-(text_type,) -> Markup
-(tkinter.Event[Treeview],) -> Any
-(tkinter.StringVar,) -> Any
-(types.MethodType,) -> Any
-(types.ModuleType,) -> IResourceProvider
+(AnyStr) -> AnyStr
+(AnyStr) -> Any
+(Any) -> Any
+(Any) -> None
+(Any) -> Optional[MutableMapping[_KT, Any]]
+(Any) -> _R
+(Any) -> _T
+(Any) -> _reducedtype
+(Any) -> bool
+(Any) -> str
+(BaseException) -> None
+((...) -> Any) -> (...) -> Any
+((...) -> Any) -> Command
+((...) -> Any) -> Group
+((...) -> Generator[Any, Any, Any]) -> (...) -> None
+((...) -> _T) -> (...) -> _T
+((...) -> _T) -> _lru_cache_wrapper[_T]
+(Channel) -> None
+(ContentRange) -> Any
+(Dict[Any, Any]) -> Any
+(Dict[str, Any]) -> Any
+(Dict[str, Any]) -> None
+(Distribution) -> None
+(DocTest) -> Any
+(Element) -> Text
+(Event[Canvas]) -> Any
+(Event[Misc]) -> Any
+(Event[Text]) -> Any
+(Event[_W]) -> Any
+(Future[_T]) -> Any
+(HeaderSet) -> Any
+(IO[Any]) -> BabylMessage
+(IO[Any]) -> MHMessage
+(IO[Any]) -> MMDFMessage
+(IO[Any]) -> MaildirMessage
+(IO[Any]) -> _MessageT
+(IO[Any]) -> mboxMessage
+(Iterable[Tuple[Text, Text]]) -> _T
+(List[Any]) -> _T
+(List[TestCase]) -> TestSuite
+(List[Tuple[Any, Any]]) -> Any
+(List[Tuple[str, Any]]) -> Any
+(List[Tuple[str, Any]]) -> _T
+(MIMEApplication) -> None
+(MIMEAudio) -> None
+(MIMEImage) -> None
+(Match[AnyStr]) -> AnyStr
+(Match[_AnyStr2]) -> _AnyStr2
+(Message) -> None
+(None) -> Any
+(None) -> None
+(OSError) -> Any
+(Optional[BaseException]) -> None
+(Optional[Exception]) -> Any
+(Optional[Exception]) -> _T
+(Optional[List[Tuple[str, float]]]) -> _T
+(Optional[float]) -> struct_time
+(Optional[str]) -> Any
+(Path) -> bool
+(PreparedRequest) -> PreparedRequest
+(ReadableBuffer) -> _Hash
+(ReferenceType[_T]) -> Any
+(RequestCacheControl) -> Any
+(Requirement) -> _T
+(Response) -> Response
+(Sequence[_KT]) -> _KT
+(Sequence[_T]) -> _T
+(Sequence[int]) -> bytes
+(Sized) -> int
+(StringVar) -> Any
+(TarInfo) -> Optional[TarInfo]
+(Tuple[int, str, _Pos, _Pos, str]) -> None
+(Type[_T]) -> Type[_T]
+(UnicodeError) -> Tuple[Union[str, bytes], int]
+(Unpickler) -> None
+(UnraisableHookArgs) -> Any
+(WWWAuthenticate) -> Any
+(_AnyCallable) -> _AnyCallable
+(_C) -> Any
+(_ExceptHookArgs) -> Any
+(_FT) -> _FT
+(_F) -> _F
+(_KT) -> None
+(_KT) -> _VT
+(_Reduce[_TypeT]) -> _TypeT
+(_ReprFunc) -> _ReprFunc
+(_S) -> Any
+(_S) -> _T
+(_T1) -> SupportsLessThan
+(_T1) -> _S
+(_T1) -> _T2
+(_T) -> Any
+(_T) -> None
+(_T) -> SupportsLessThan
+(_T) -> Union[int, float, str, bytes]
+(_T) -> _S
+(_T) -> _T
+(_T) -> bool
+(_T) -> str
+(_TypeT) -> Union[str, _Reduce[_TypeT]]
+(_VT) -> _VT
+(_VT) -> float
+(_V) -> _R
+(_str) -> float
+(_timerFunc) -> _timerFunc
+(bool) -> None
+(bytes) -> Any
+(bytes) -> None
+(bytes) -> Optional[bytes]
+(bytes) -> _HashType
+(bytes) -> bytes
+(float) -> None
+(float) -> _ScoreCastFuncReturn
+(futures.Future[Any]) -> None
+(int) -> Any
+(int) -> None
+(int) -> Tuple[_Text, ...]
+(int) -> Tuple[str, ...]
+(int) -> int
+(object) -> Any
+(object) -> str
+(str) -> Any
+(str) -> None
+(str) -> Optional[CodecInfo]
+(str) -> _R
+(str) -> _T
+(str) -> bool
+(str) -> float
+(str) -> importlib.abc.PathEntryFinder
+(str) -> int
+(str) -> str
+(text_type) -> Markup
+(tkinter.Event[Treeview]) -> Any
+(tkinter.StringVar) -> Any
+(types.MethodType) -> Any
+(types.ModuleType) -> IResourceProvider
 (AbstractEventLoop, Generator[Any, None, _T]) -> Future[_T]
 (Action, Iterable[Tuple[Text, Action]]) -> Any
 (Action, Iterable[Tuple[str, Action]]) -> Any
@@ -223,8 +223,8 @@
 (Context, Union[Option, Parameter], int) -> Any
 (Context, Union[Option, Parameter], str) -> Any
 (FrameType, str, Any) -> Any
-(Marshaller, Any, (str,) -> Any) -> None
-(Marshaller, str, (str,) -> None) -> None
+(Marshaller, Any, (str) -> Any) -> None
+(Marshaller, str, (str) -> None) -> None
 (Optional[str], str, str) -> None
 (Port, Port, bool) -> None
 (Port, str, str) -> None
